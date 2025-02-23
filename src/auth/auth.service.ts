@@ -73,7 +73,7 @@ export class AuthService {
     userData = this.TokenService.validateAccessToken(accessToken)
     
     if (userData != null) {
-      user = await this.UserModel.findById(userData._id)
+      user = await this.UserModel.findById(userData._id).populate("sentSolutions")
       
       return {
         refreshToken: refreshToken,
@@ -95,7 +95,7 @@ export class AuthService {
       throw ApiError.UnauthorizedError()
     }
 
-    user = (await this.UserModel.findById(userData._id)).toObject()
+    user = (await this.UserModel.findById(userData._id).populate("sentSolutions")).toObject()
 
     if (userData.password !== user.password) {
       throw ApiError.AccessDenied('Аутентификация провалена. Пароль изменен')

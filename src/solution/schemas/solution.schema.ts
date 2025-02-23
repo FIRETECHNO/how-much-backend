@@ -49,7 +49,7 @@ export class SolutionClass {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Homework',
   })
-  homework: mongoose.Schema.Types.ObjectId[];
+  homework: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
