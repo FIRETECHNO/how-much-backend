@@ -81,6 +81,21 @@ export class LessonController {
     return;
   }
 
+  @Post('add-telemostlink')
+  async updateTelemostLink(
+    @Body('lesson_id') lesson_id: string,
+    @Body('link') link: string,
+  ) {
+    let lessonFromDb = await this.LessonModel.findById(lesson_id);
+
+    if (lessonFromDb?._id) {
+      lessonFromDb.telemostLink = link
+
+      return await lessonFromDb.save()
+    }
+    return;
+  }
+
   @Post('homeworks-by-courses')
   async getHomeworksByCourses(
     @Body('courses') courses: string[]
