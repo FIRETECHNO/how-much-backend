@@ -7,10 +7,12 @@ import { diskStorage } from 'multer';
 import * as fs from 'fs';
 
 import SolutionModel from './models/solution.model';
+import UserModel from 'src/user/models/user.model';
 
 @Module({
   imports: [
     SolutionModel,
+    UserModel,
     MulterModule.register({
       storage: diskStorage({
         destination: (req, file, cb) => {

@@ -52,6 +52,12 @@ export class UserClass {
   myCourses: mongoose.Schema.Types.ObjectId[];
 
   @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Solution' }],
+    default: [],
+  })
+  sentSolutions: mongoose.Schema.Types.ObjectId[];
+
+  @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
     default: [],
   })

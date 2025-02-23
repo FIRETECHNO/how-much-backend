@@ -10,4 +10,5 @@ export interface User {
   roles: Role[]
   myCourses: string[]
   createdCourses: string[]
+  sentSolutions: string[]
 }

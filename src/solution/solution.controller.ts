@@ -8,18 +8,26 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { SolutionClass } from './schemas/solution.schema';
+import { UserClass } from 'src/user/schemas/user.schema';
 
 @Controller('solution')
 export class SolutionController {
   constructor(
     @InjectModel('Solution') private SolutionModel: Model<SolutionClass>,
+    @InjectModel('User') private UserModel: Model<UserClass>,
     private readonly solutionService: SolutionService) { }
 
   @Post('')
   async newSolution(
     @Body('solution') solution: any
   ) {
-    return await this.SolutionModel.create(solution)
+    let solutionFromDb = await this.SolutionModel.create(solution);
+
+    if (solution.student) {
+      await this.UserModel.findByIdAndUpdate(solution.student, { $push: { sentSolutions: solutionFromDb._id } })
+    }
+    
+    return solutionFromDb;
   }
 
   @Get('')
