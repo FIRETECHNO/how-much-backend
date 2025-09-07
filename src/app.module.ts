@@ -15,13 +15,10 @@ import { AppStateModule } from './app-state/app-state.module';
 import { MailModule } from './mail/mail.module';
 import { APP_GUARD } from '@nestjs/core'
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
-import { CourseModule } from './course/course.module';
-import { LessonModule } from './lesson/lesson.module';
 import { VideoModule } from './video/video.module';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { SolutionModule } from './solution/solution.module';
 
 @Module({
   imports: [
@@ -52,10 +49,7 @@ import { SolutionModule } from './solution/solution.module';
     S3Module,
     AppStateModule,
     MailModule,
-    CourseModule,
-    LessonModule,
     VideoModule,
-    SolutionModule,
   ],
   controllers: [AppController],
   providers: [AppService,

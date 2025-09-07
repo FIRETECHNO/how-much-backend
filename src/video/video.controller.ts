@@ -22,13 +22,11 @@ import YaCloud from 'src/s3/bucket';
 // mongo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LessonClass } from 'src/course/schemas/lesson.schema';
 
 @Throttle({ default: { limit: 100, ttl: 200000, blockDuration: 5 * 60000 } })
 @Controller('video')
 export class VideoController {
   constructor(private readonly videoService: VideoService,
-    @InjectModel('Lesson') private LessonModel: Model<LessonClass>,
   ) { }
 
 
@@ -79,7 +77,7 @@ export class VideoController {
         return hlsResult
       }
 
-      return await this.LessonModel.findByIdAndUpdate(lessonId, { $push: { videos: process.env.API_URL + '/static/lesson-videos/' + String(filename) } })
+      // return await this.LessonModel.findByIdAndUpdate(lessonId, { $push: { videos: process.env.API_URL + '/static/lesson-videos/' + String(filename) } })
     }
 
     return { message: 'Chunk uploaded successfully', chunkIndex };
