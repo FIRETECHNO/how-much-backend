@@ -8,7 +8,4 @@ export interface User {
   email: string
   password: string
   roles: Role[]
-  myCourses: string[]
-  createdCourses: string[]
-  sentSolutions: string[]
 }

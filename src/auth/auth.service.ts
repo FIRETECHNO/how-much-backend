@@ -71,10 +71,10 @@ export class AuthService {
 
     // проверить, валиден ли ещё accessToken
     userData = this.TokenService.validateAccessToken(accessToken)
-    
+
     if (userData != null) {
-      user = await this.UserModel.findById(userData._id).populate("sentSolutions")
-      
+      user = await this.UserModel.findById(userData._id)
+
       return {
         refreshToken: refreshToken,
         accessToken: accessToken,
@@ -95,7 +95,7 @@ export class AuthService {
       throw ApiError.UnauthorizedError()
     }
 
-    user = (await this.UserModel.findById(userData._id).populate("sentSolutions")).toObject()
+    user = await this.UserModel.findById(userData._id)
 
     if (userData.password !== user.password) {
       throw ApiError.AccessDenied('Аутентификация провалена. Пароль изменен')
@@ -103,7 +103,7 @@ export class AuthService {
     // new accessToken, чтобы пользователь мог зайти в
     // систему ближайшие 15 минут без использоватния refreshToken
     const newAccessToken = this.TokenService.generateAccessToken({ _id: user._id, password: user.password })
-    
+
     return {
       refreshToken: refreshToken,
       accessToken: newAccessToken,
