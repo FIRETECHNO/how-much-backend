@@ -26,11 +26,12 @@ export class JobFormClass {
 
 
   @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: Object,
     required: true
   })
-  author: mongoose.Schema.Types.ObjectId;
+  video: {
+    src: string
+  };
 }
 
 export const JobFormSchema = SchemaFactory.createForClass(JobFormClass);
