@@ -18,12 +18,17 @@ export class JobFormController {
     @Body("jobForm") jobForm: JobForm_client
   ) {
     let toSave = {
-      job: jobForm.job,
-      fullName: jobForm.fullName,
-      coverLetter: jobForm.coverLetter,
-      video: jobForm.video
+      job: jobForm?.job,
+      fullName: jobForm?.fullName,
+      coverLetter: jobForm?.coverLetter,
+      video: jobForm?.video
     }
 
     return await this.JobFormModel.create(toSave)
+  }
+
+  @Post('organization/get-all')
+  async getOrganizationJobs() {
+    return await this.JobFormModel.find({})
   }
 }
