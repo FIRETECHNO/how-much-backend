@@ -27,8 +27,15 @@ export class JobFormController {
     return await this.JobFormModel.create(toSave)
   }
 
-  @Post('organization/get-all')
+  @Post('admin/get-all')
   async getOrganizationJobs() {
     return await this.JobFormModel.find({})
+  }
+
+  @Post('get-by-id')
+  async getById(
+    @Body("jobId") jobId: string
+  ) {
+    return await this.JobFormModel.findById(jobId)
   }
 }
