@@ -17,7 +17,6 @@ export class JobFormController {
   async createJobForm(
     @Body("jobForm") jobForm: JobForm_client
   ) {
-    console.log(jobForm);
     let toSave = {
       job: jobForm.job,
       fullName: jobForm.fullName,
