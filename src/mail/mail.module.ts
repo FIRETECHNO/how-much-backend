@@ -18,7 +18,7 @@ import { join } from 'path';
         },
       },
       defaults: {
-        from: '"Не отвечайте на это письмо" <noreply@grishaadzyin@gmail.com>',
+        from: '"Не отвечайте на это письмо" <noreply@grishadzyin@gmail.com>',
       },
       template: {
         dir: join(__dirname, 'templates'),
