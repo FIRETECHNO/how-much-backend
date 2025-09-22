@@ -12,7 +12,7 @@ export class MailService {
     // const url = `example.com/auth/confirm?token=${token}`;
     await this.mailerService.sendMail({
       to: user.email,
-      from: '"Команда проекта Глазов-есть!" <plpo@ya.ru>', // override default from
+      from: '"Команда проекта Сколько?" <grishadzyin@gmail.com>', // override default from
       subject: 'Спасибо за регистрацию',
       template: './confirmation', // `.hbs` extension is appended automatically
       context: { // ✏️ filling curly brackets with content
@@ -25,7 +25,7 @@ export class MailService {
   public async sendOrderNotifications(userEmails: string[], order: any) {
     return await this.mailerService.sendMail({
       to: userEmails,
-      from: "Команда Глазов-есть <plpo@ya.ru>", // override default from
+      from: '"Команда проекта Сколько?" <grishadzyin@gmail.com>', // override default from
       subject: 'Новый заказ',
       template: 'order', // `.hbs` extension is appended automatically
       context: { order: order._doc }
@@ -35,7 +35,7 @@ export class MailService {
   public async sendResetLink(link: string, email: string) {
     return await this.mailerService.sendMail({
       to: email,
-      from: "Команда Глазов-есть <plpo@ya.ru>", // override default from
+      from: '"Команда проекта Сколько?" <grishadzyin@gmail.com>', // override default from
       subject: 'Восстановление пароля',
       template: 'reset-pasword', // `.hbs` extension is appended automatically
       context: { link }
