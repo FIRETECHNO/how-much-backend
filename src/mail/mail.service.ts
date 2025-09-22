@@ -8,7 +8,7 @@ import type { User } from 'src/user/interfaces/user.interface'
 export class MailService {
   constructor(private mailerService: MailerService) { }
 
-  public async sendUserConfirmation(user: User) {
+  public async sendUserConfirmation(user: any) {
     // const url = `example.com/auth/confirm?token=${token}`;
     await this.mailerService.sendMail({
       to: user.email,

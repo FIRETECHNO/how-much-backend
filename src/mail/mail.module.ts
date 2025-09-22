@@ -18,11 +18,11 @@ import { join } from 'path';
         },
       },
       defaults: {
-        from: '"Не отвечайте на это письмо" <noreply@glazovest.com>',
+        from: '"Не отвечайте на это письмо" <noreply@grishaadzyin@gmail.com>',
       },
       template: {
         dir: join(__dirname, 'templates'),
-        adapter: new HandlebarsAdapter(), 
+        adapter: new HandlebarsAdapter(),
         options: {
           strict: true,
         },
@@ -33,4 +33,4 @@ import { join } from 'path';
   exports: [MailService], // 👈 export for DI
 })
 
-export class MailModule {}
+export class MailModule { }

@@ -9,13 +9,12 @@ import { AuthService } from './auth.service';
 import { MailService } from 'src/mail/mail.service';
 import { Throttle } from '@nestjs/throttler';
 
-
 import YaCloud from 'src/s3/bucket';
 import * as sharp from "sharp";
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
 
 @Controller('auth')
@@ -25,6 +24,17 @@ export class AuthController {
 		private mailService: MailService,
 		@InjectModel('User') private UserModel: Model<UserClass>,
 	) { }
+
+	// @Get("/test")
+	// async test() {
+	// 	console.log(
+	// 		await this.mailService.sendUserConfirmation({
+	// 			"name": "Григорий Дзюин",
+	// 			"email": "glebegorov390@gmail.com",
+	// 		})
+	// 	);
+	// 	return 'ok'
+	// }
 
 	@Throttle({
 		default: {
