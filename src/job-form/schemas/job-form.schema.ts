@@ -23,6 +23,17 @@ export class JobFormClass {
   })
   coverLetter: string;
 
+  @Prop({
+    type: String,
+    required: true,
+  })
+  phone: string;
+  @Prop({
+    type: String,
+    required: true,
+  })
+  telegram: string;
+
 
 
   @Prop({
