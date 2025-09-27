@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import type { Role } from '../../roles/interfaces/role.interface';
+import { CompanyFromDadataClass, CompanyFromDadataSchema } from './company.schema';
+
 export type UserDocument = HydratedDocument<UserClass>;
 
 @Schema()
@@ -37,6 +38,13 @@ export class UserClass {
     required: false
   })
   avatars: string[];
+
+  @Prop({
+    type: CompanyFromDadataSchema,
+    required: false,
+    default: null,
+  })
+  company: CompanyFromDadataClass | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

@@ -50,7 +50,11 @@ export class AuthController {
 		@Body() user: User
 	) {
 		const userData = await this.AuthService.registration(user)
-		await this.mailService.sendUserConfirmation(user);
+
+		if (process.env.NODE_ENV === 'production')
+			await this.mailService.sendUserConfirmation(user);
+
+		console.log("mail sent");
 
 		let refreshToken = userData.refreshToken
 		delete userData.refreshToken

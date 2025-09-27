@@ -1,4 +1,5 @@
 import type { Role } from "../../roles/interfaces/role.interface";
+import type { CompanyFromDadata } from "./company.interface";
 export interface UserFromClient {
   _id: string
   name: string
@@ -6,4 +7,5 @@ export interface UserFromClient {
   email: string
   password: string
   roles: Role[]
+  company: null | CompanyFromDadata
 }
