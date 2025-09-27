@@ -38,4 +38,9 @@ export class JobFormController {
   ) {
     return await this.JobFormModel.findById(jobId)
   }
+
+  @Post("get-all")
+  async getAll() {
+    return await this.JobFormModel.find({})
+  }
 }
