@@ -51,7 +51,12 @@ export class JobFormController {
     sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
 
     let query = {
-      lastReservationDate: { $lt: sixHoursAgo }
+      $or: [
+        {
+          lastReservationDate: { $lt: sixHoursAgo }
+        },
+        { lastReservationDate: { $exists: false } },
+      ]
     }
     return await this.JobFormModel.find(query)
   }
