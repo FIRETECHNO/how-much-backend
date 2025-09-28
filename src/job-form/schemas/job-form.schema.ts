@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
-export type UserDocument = HydratedDocument<JobFormClass>;
+export type JobFormDocument = HydratedDocument<JobFormClass>;
 
 @Schema()
 export class JobFormClass {
@@ -43,6 +43,12 @@ export class JobFormClass {
   video: {
     src: string
   };
+
+  @Prop({
+    type: Date,
+    required: false
+  })
+  lastReservationDate: Date
 }
 
 export const JobFormSchema = SchemaFactory.createForClass(JobFormClass);
