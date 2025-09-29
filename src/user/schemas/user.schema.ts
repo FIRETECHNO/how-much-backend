@@ -45,6 +45,13 @@ export class UserClass {
     default: null,
   })
   company: CompanyFromDadataClass | null;
+
+  @Prop({
+    type: Boolean,
+    required: false,
+    default: false
+  })
+  isModerated: boolean
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserClass);

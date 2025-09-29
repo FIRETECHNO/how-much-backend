@@ -20,6 +20,7 @@ import { VideoModule } from './video/video.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JobFormModule } from './job-form/job-form.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { JobFormModule } from './job-form/job-form.module';
     MailModule,
     VideoModule,
     JobFormModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService,

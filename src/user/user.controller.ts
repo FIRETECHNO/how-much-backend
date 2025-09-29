@@ -25,7 +25,7 @@ import { UserFromClient } from './interfaces/user-from-client.interface';
 import RequestWithUser from 'src/types/request-with-user.type';
 
 
-// all aboout MongoDB
+// all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserClass } from './schemas/user.schema';
