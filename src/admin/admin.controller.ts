@@ -23,4 +23,20 @@ export class AdminController {
     }
     return await this.UserModel.find(query)
   }
+
+  @Post("employers/moderate")
+  async moderateEmployer(
+    @Body("userId") userId: string,
+    @Body("value") value: boolean
+  ) {
+    try {
+      if (value == true) {
+        return await this.UserModel.findByIdAndUpdate(userId, { isModerated: true })
+      } else {
+        return await this.UserModel.findByIdAndDelete(userId)
+      }
+    } catch (error) {
+      return error
+    }
+  }
 }
