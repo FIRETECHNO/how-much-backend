@@ -8,6 +8,8 @@ export interface JobForm_client {
   coverLetter: string
   phone: string
   telegram: string
+  email: string
+  employeeId: string | null,
 
   // for upload
   tmpId: number

@@ -16,6 +16,7 @@ export class UserClass {
   @Prop({
     type: String,
     required: true,
+    unique: true
   })
   email: string;
 

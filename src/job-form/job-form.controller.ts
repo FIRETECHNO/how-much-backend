@@ -27,7 +27,11 @@ export class JobFormController {
       job: jobForm?.job,
       fullName: jobForm?.fullName,
       coverLetter: jobForm?.coverLetter,
-      video: jobForm?.video
+      video: jobForm?.video,
+      phone: jobForm.phone,
+      telegram: jobForm.telegram,
+      email: jobForm.email,
+      employeeId: jobForm?.employeeId ?? null,
     }
 
     return await this.JobFormModel.create(toSave)

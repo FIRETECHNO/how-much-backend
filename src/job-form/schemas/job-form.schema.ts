@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type JobFormDocument = HydratedDocument<JobFormClass>;
 
@@ -19,7 +19,7 @@ export class JobFormClass {
 
   @Prop({
     type: String,
-    required: true,
+    required: false,
   })
   coverLetter: string;
 
@@ -28,13 +28,27 @@ export class JobFormClass {
     required: true,
   })
   phone: string;
+
   @Prop({
     type: String,
     required: true,
   })
   telegram: string;
 
+  @Prop({
+    type: String,
+    required: false,
+    default: "",
+  })
+  email: string;
 
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: false,
+    default: null
+  })
+  employeeId: Types.ObjectId
 
   @Prop({
     type: Object,
