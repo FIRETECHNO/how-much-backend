@@ -1,5 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { JobFormService } from './job-form.service';
+import { MailService } from 'src/mail/mail.service';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -15,6 +16,7 @@ const RESERVATION_DURATION = 6 * 60 * 60 * 1000
 export class JobFormController {
   constructor(
     private readonly jobFormService: JobFormService,
+    private readonly mailService: MailService,
     @InjectModel('JobForm') private JobFormModel: Model<JobFormClass>,
     @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
   ) { }
@@ -34,7 +36,12 @@ export class JobFormController {
       employeeId: jobForm?.employeeId ?? null,
     }
 
-    return await this.JobFormModel.create(toSave)
+    let jobFormFromDb = await this.JobFormModel.create(toSave)
+
+    if (jobForm?.employeeId == null) {
+      await this.mailService.sendJobFormCreatedNotification(jobFormFromDb.email, jobFormFromDb.fullName)
+    }
+    return jobFormFromDb
   }
 
   @Post('admin/get-all')
