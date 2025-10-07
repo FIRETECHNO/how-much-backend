@@ -62,6 +62,7 @@ export class JobFormController {
     sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
 
     let query = {
+      isApproved: true,
       $or: [
         {
           lastReservationDate: { $lt: sixHoursAgo }
@@ -123,5 +124,37 @@ export class JobFormController {
     }
 
     return null;
+  }
+
+  @Post("get-by-employee-id")
+  async getByEmployeeId(
+    @Body("employeeId") employeeId: string
+  ) {
+    return await this.JobFormModel.find({ employeeId: employeeId })
+  }
+
+  @Post("approve")
+  async approveJobForm(
+    @Body("jobFormId") jobFormId: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.isApproved = true;
+    candidate.markModified("isApproved")
+
+    return await candidate.save();
+  }
+  @Post("disapprove")
+  async disapproveJobForm(
+    @Body("jobFormId") jobFormId: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.isApproved = false;
+    candidate.markModified("isApproved")
+
+    return await candidate.save();
   }
 }

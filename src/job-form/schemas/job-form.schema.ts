@@ -63,6 +63,13 @@ export class JobFormClass {
     required: false
   })
   lastReservationDate: Date
+
+
+  @Prop({
+    type: Boolean,
+    default: false
+  })
+  isApproved: Boolean
 }
 
 export const JobFormSchema = SchemaFactory.createForClass(JobFormClass);
