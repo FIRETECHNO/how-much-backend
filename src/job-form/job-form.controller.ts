@@ -61,13 +61,26 @@ export class JobFormController {
     const sixHoursAgo = new Date();
     sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
 
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
     let query = {
       isApproved: true,
-      $or: [
+      $and: [
         {
-          lastReservationDate: { $lt: sixHoursAgo }
+          $or: [
+            {
+              lastReservationDate: { $lt: sixHoursAgo }
+            },
+            { lastReservationDate: { $exists: false } },
+          ],
         },
-        { lastReservationDate: { $exists: false } },
+        {
+          $or: [
+            { lastRaiseDate: { $lte: twoDaysAgo } },
+            { lastRaiseDate: { $exists: false } },
+          ],
+        }
       ]
     }
     return await this.JobFormModel.find(query)
@@ -143,6 +156,10 @@ export class JobFormController {
     candidate.isApproved = true;
     candidate.markModified("isApproved")
 
+    let currentDate = new Date().toISOString()
+    candidate.lastRaiseDate = new Date(currentDate);
+    candidate.markModified("lastRaiseDate")
+
     return await candidate.save();
   }
   @Post("disapprove")
@@ -154,6 +171,19 @@ export class JobFormController {
 
     candidate.isApproved = false;
     candidate.markModified("isApproved")
+
+    return await candidate.save();
+  }
+  @Post("boost")
+  async boostJobForm(
+    @Body("jobFormId") jobFormId: string,
+    @Body("raiseDate") raiseDate: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.lastRaiseDate = new Date(raiseDate);
+    candidate.markModified("lastRaiseDate")
 
     return await candidate.save();
   }

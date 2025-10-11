@@ -31,7 +31,7 @@ export class JobFormClass {
 
   @Prop({
     type: String,
-    required: true,
+    required: false,
   })
   telegram: string;
 
@@ -63,6 +63,14 @@ export class JobFormClass {
     required: false
   })
   lastReservationDate: Date
+
+  @Prop({
+    type: Date,
+    required: false,
+    default: null
+  })
+  lastRaiseDate: Date
+
 
 
   @Prop({
