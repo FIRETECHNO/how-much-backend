@@ -67,7 +67,6 @@ export class JobFormClass {
   @Prop({
     type: Date,
     required: false,
-    default: null
   })
   lastRaiseDate: Date
 
