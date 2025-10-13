@@ -99,6 +99,7 @@ export class JobFormController {
     @Body("jobFormId") jobFormId: string,
     @Body("startDate") startDate: string,
     @Body("employerId") employerId: string,
+    @Body("employeeId") employeeId: string,
   ) {
 
 
@@ -117,7 +118,7 @@ export class JobFormController {
     if (!jobForm.lastReservationDate) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
-      return await this.JobReservationModel.create({ jobFormId, startDate, employerId })
+      return await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })
     }
 
     const currentTime = new Date().getTime()
@@ -126,7 +127,7 @@ export class JobFormController {
     if (timeDifference > RESERVATION_DURATION) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
-      return await this.JobReservationModel.create({ jobFormId, startDate, employerId })
+      return await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })
     }
 
     throw ApiError.AccessDenied("Вы ещё не можете зарезервировать этого кандидата, он занят")
@@ -203,5 +204,24 @@ export class JobFormController {
     return await this.JobReservationModel.find({
       employerId
     }).populate("jobFormId")
+  }
+
+  @Post('job-reservation/by-employee')
+  async getEmployeeJobReservations(
+    @Body("employeeId") employeeId: string
+  ) {
+    let weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    let query = {
+      employeeId,
+      startDate: { $gt: weekAgo }
+    }
+    return await this.JobReservationModel.find(query).populate("jobFormId").populate({
+      path: "employerId",
+      select: {
+        company: 1,
+        email: 1,
+      }
+    })
   }
 }
