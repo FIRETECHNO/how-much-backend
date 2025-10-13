@@ -10,7 +10,7 @@ import { JobReservationClass } from './schemas/job-reservation.schema';
 import ApiError from 'src/exceptions/errors/api-error';
 
 
-const RESERVATION_DURATION = 6 * 60 * 60 * 1000
+const RESERVATION_DURATION = 30 * 60 * 1000
 
 @Controller('job-form')
 export class JobFormController {
@@ -186,5 +186,14 @@ export class JobFormController {
     candidate.markModified("lastRaiseDate")
 
     return await candidate.save();
+  }
+
+  @Post('job-reservation/by-employer')
+  async getEmployerJobFormsHistory(
+    @Body("employerId") employerId: string
+  ) {
+    return await this.JobReservationModel.find({
+      employerId
+    }).populate("jobFormId")
   }
 }
