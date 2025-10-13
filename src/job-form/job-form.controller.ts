@@ -9,6 +9,8 @@ import { JobForm_client } from './interfaces/job-form.interface';
 import { JobReservationClass } from './schemas/job-reservation.schema';
 import ApiError from 'src/exceptions/errors/api-error';
 
+import { Types } from "mongoose"
+
 
 const RESERVATION_DURATION = 30 * 60 * 1000
 
@@ -33,7 +35,11 @@ export class JobFormController {
       phone: jobForm.phone,
       telegram: jobForm.telegram,
       email: jobForm.email,
-      employeeId: jobForm?.employeeId ?? null,
+      employeeId: null,
+    }
+
+    if (jobForm.employeeId != null) {
+      toSave.employeeId = new Types.ObjectId(jobForm.employeeId)
     }
 
     let jobFormFromDb = await this.JobFormModel.create(toSave)
@@ -58,32 +64,34 @@ export class JobFormController {
 
   @Post("get-all")
   async getAll() {
-    const sixHoursAgo = new Date();
-    sixHoursAgo.setHours(sixHoursAgo.getHours() - 6);
+    const reservationDeadline = new Date();
+    reservationDeadline.setMinutes(reservationDeadline.getMinutes() - 30);
 
-    const twoDaysAgo = new Date();
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const raiseDeadline = new Date();
+    raiseDeadline.setDate(raiseDeadline.getDate() - 2);
 
     let query = {
-      isApproved: true,
       $and: [
+        { isApproved: true },
         {
           $or: [
             {
-              lastReservationDate: { $lt: sixHoursAgo }
+              lastReservationDate: { $lt: reservationDeadline }
             },
             { lastReservationDate: { $exists: false } },
           ],
         },
         {
           $or: [
-            { lastRaiseDate: { $lte: twoDaysAgo } },
+            { lastRaiseDate: { $gt: raiseDeadline } },
             { lastRaiseDate: { $exists: false } },
           ],
         }
       ]
     }
-    return await this.JobFormModel.find(query)
+    let res = await this.JobFormModel.find(query)
+
+    return res
   }
 
   @Post("reserve")
@@ -143,7 +151,7 @@ export class JobFormController {
   async getByEmployeeId(
     @Body("employeeId") employeeId: string
   ) {
-    return await this.JobFormModel.find({ employeeId: employeeId })
+    return await this.JobFormModel.find({ employeeId: new Types.ObjectId(employeeId) })
   }
 
   @Post("approve")

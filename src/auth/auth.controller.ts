@@ -14,15 +14,16 @@ import * as sharp from "sharp";
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
-
+import { JobFormClass } from 'src/job-form/schemas/job-form.schema';
 @Controller('auth')
 export class AuthController {
 	constructor(
 		private AuthService: AuthService,
 		private mailService: MailService,
 		@InjectModel('User') private UserModel: Model<UserClass>,
+		@InjectModel("JobForm") private JobFormModel: Model<JobFormClass>
 	) { }
 
 	// @Get("/test")
@@ -50,6 +51,11 @@ export class AuthController {
 		@Body() user: User
 	) {
 		const userData = await this.AuthService.registration(user)
+
+		await this.JobFormModel.updateMany(
+			{ email: userData.user.email, employeeId: null },
+			{ $set: { employeeId: new Types.ObjectId(userData.user._id) } }
+		);
 
 		if (process.env.NODE_ENV === 'production')
 			await this.mailService.sendUserConfirmation(user);
