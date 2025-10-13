@@ -7,12 +7,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
 import ApiError from 'src/exceptions/errors/api-error';
+import { JobReservationClass } from 'src/job-form/schemas/job-reservation.schema';
 
 @Controller('admin')
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     @InjectModel('User') private UserModel: Model<UserClass>,
+    @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
   ) { }
 
   @Post("employers/not-moderated")
@@ -51,6 +53,21 @@ export class AdminController {
       return candidate
     } catch (error) {
       throw ApiError.BadRequest("Ошибка при поиске соискателя")
+    }
+  }
+
+  @Post("job-reservations/get-all")
+  async getAllReservations() {
+    try {
+      return this.JobReservationModel.find({}).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
+    } catch (error) {
+      throw ApiError.BadRequest("Ошибка при поиске")
     }
   }
 }
