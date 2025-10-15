@@ -3,20 +3,22 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci  # Устанавливаем ВСЕ зависимости, включая dev
+RUN npm ci
 
 COPY . .
-RUN npm run build  # Собираем проект
+
+# Сборка NestJS
+RUN npm run build
 
 # ---------- Этап продакшена ----------
 FROM node:20-alpine AS production
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production  # Только прод зависимости
+RUN npm ci --only=production
 
-# Копируем собранный код из builder
 COPY --from=builder /app/dist ./dist
 
 EXPOSE 4000
+
 CMD ["node", "dist/main.js"]
