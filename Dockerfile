@@ -4,8 +4,6 @@ FROM node:20-alpine
 # 2. Рабочая директория
 WORKDIR /app
 
-RUN git submodule update --init --remote
-
 # 3. Копируем package.json и package-lock.json (или yarn.lock)
 COPY package*.json ./
 
