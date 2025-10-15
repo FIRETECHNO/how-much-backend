@@ -1,23 +1,22 @@
-# 1. Базовый образ Node.js
-FROM node:20-alpine
-
-# 2. Рабочая директория
+# ---------- Этап сборки ----------
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 3. Копируем package.json и package-lock.json (или yarn.lock)
 COPY package*.json ./
+RUN npm ci  # Устанавливаем ВСЕ зависимости, включая dev
 
-# 4. Устанавливаем зависимости
-RUN npm ci --only=production
-
-# 5. Копируем весь проект
 COPY . .
+RUN npm run build  # Собираем проект
 
-# 6. Собираем проект (если используешь TypeScript)
-RUN npm run build
+# ---------- Этап продакшена ----------
+FROM node:20-alpine AS production
+WORKDIR /app
 
-# 7. Порт внутри контейнера
+COPY package*.json ./
+RUN npm ci --only=production  # Только прод зависимости
+
+# Копируем собранный код из builder
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 4000
-
-# 8. Команда запуска
 CMD ["node", "dist/main.js"]
