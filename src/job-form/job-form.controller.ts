@@ -67,14 +67,20 @@ export class JobFormController {
   }
 
   @Post("get-all")
-  async getAll() {
+  async getAll(
+    @Body("selectedJob") selectedJob: string | null,
+    @Body("selectedExperience") selectedExperience: string | null,
+    @Body("selectedWorkFormat") selectedWorkFormat: string | null,
+    @Body("salaryFrom") salaryFrom: number | null,
+    @Body("salaryTo") salaryTo: number | null
+  ) {
     const reservationDeadline = new Date();
     reservationDeadline.setMinutes(reservationDeadline.getMinutes() - 30);
 
     const raiseDeadline = new Date();
     raiseDeadline.setDate(raiseDeadline.getDate() - 2);
 
-    let query = {
+    let query: any = {
       $and: [
         { isApproved: true },
         {
@@ -93,6 +99,58 @@ export class JobFormController {
         }
       ]
     }
+
+    if (selectedJob) {
+      query.$and.push({ job: selectedJob });
+    }
+
+    if (selectedExperience) {
+      query.$and.push({ experience: selectedExperience });
+    }
+
+    if (selectedWorkFormat) {
+      query.$and.push({ workFormat: selectedWorkFormat });
+    }
+
+    const salaryOverlapConditions = [];
+
+    if (salaryFrom) {
+      // Работодатель ищет от X. Нам подходят кандидаты, у которых:
+      // - Верхняя граница (salaryTo) больше X
+      // - ИЛИ верхняя граница не указана (значит, "до бесконечности")
+      salaryOverlapConditions.push({
+        $or: [
+          { salaryTo: { $gte: salaryFrom } },
+          { salaryTo: null }
+        ]
+      });
+    }
+
+    if (salaryTo) {
+      // Работодатель ищет до Y. Нам подходят кандидаты, у которых:
+      // - Нижняя граница (salaryFrom) меньше Y
+      // - ИЛИ нижняя граница не указана (значит, "от 0")
+      salaryOverlapConditions.push({
+        $or: [
+          { salaryFrom: { $lte: salaryTo } },
+          { salaryFrom: null }
+        ]
+      });
+    }
+
+    // Если работодатель указал хотя бы одну границу зарплаты,
+    // мы добавляем сложное условие в основной запрос.
+    if (salaryOverlapConditions.length > 0) {
+      query.$and.push({
+        $or: [
+          // 1. Включаем всех, кто ВООБЩЕ не указал зарплату (позитивный поиск)
+          { salaryFrom: null, salaryTo: null },
+          // 2. ИЛИ тех, чей диапазон пересекается с поиском
+          { $and: salaryOverlapConditions }
+        ]
+      });
+    }
+
     let res = await this.JobFormModel.find(query)
 
     return res
