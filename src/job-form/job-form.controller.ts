@@ -151,7 +151,7 @@ export class JobFormController {
       });
     }
 
-    let res = await this.JobFormModel.find(query)
+    let res = await this.JobFormModel.find(query).sort({ lastRaiseDate: -1 })
 
     return res
   }
