@@ -70,6 +70,31 @@ export class JobFormClass {
   })
   lastRaiseDate: Date
 
+  @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  salaryFrom: number | null
+
+  @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  salaryTo: number | null
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  experience: string
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  workFormat: string
 
 
   @Prop({

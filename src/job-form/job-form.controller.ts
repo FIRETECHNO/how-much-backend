@@ -36,6 +36,10 @@ export class JobFormController {
       telegram: jobForm.telegram,
       email: jobForm.email,
       employeeId: null,
+      salaryFrom: jobForm?.salaryFrom ?? null,
+      salaryTo: jobForm?.salaryTo ?? null,
+      experience: jobForm.experience,
+      workFormat: jobForm.workFormat,
     }
 
     if (jobForm.employeeId != null) {
