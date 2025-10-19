@@ -286,4 +286,37 @@ export class JobFormController {
       }
     })
   }
+
+  @Post("job-reservation/submit-feedback")
+  async submitJobReservationFeedback(
+    @Body("reservationId") reservationId: string,
+    @Body("employerFeedback") employerFeedback: string | null,
+    @Body("employeeFeedback") employeeFeedback: string | null,
+  ) {
+    if (!employerFeedback && !employeeFeedback) {
+      throw ApiError.BadRequest("Неправильно передана обратная связь")
+    }
+    let currentDate = new Date()
+    if (employerFeedback) {
+      return await this.JobReservationModel.findByIdAndUpdate(reservationId, {
+        $set: {
+          employerFeedback: {
+            textContent: employerFeedback,
+            sentDate: currentDate.toISOString()
+          }
+        }
+      }, { new: true })
+    }
+
+    if (employeeFeedback) {
+      return await this.JobReservationModel.findByIdAndUpdate(reservationId, {
+        $set: {
+          employeeFeedback: {
+            textContent: employerFeedback,
+            sentDate: currentDate.toISOString()
+          }
+        }
+      }, { new: true })
+    }
+  }
 }
