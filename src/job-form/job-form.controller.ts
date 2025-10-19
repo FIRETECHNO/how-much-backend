@@ -180,7 +180,7 @@ export class JobFormController {
     if (!jobForm.lastReservationDate) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
-      return await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })
+      return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
     }
 
     const currentTime = new Date().getTime()
@@ -189,7 +189,7 @@ export class JobFormController {
     if (timeDifference > RESERVATION_DURATION) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
-      return await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })
+      return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
     }
 
     throw ApiError.AccessDenied("Вы ещё не можете зарезервировать этого кандидата, он занят")
@@ -199,7 +199,7 @@ export class JobFormController {
   async getReservedJob(
     @Body("employerId") employerId: string
   ) {
-    let userReservations = await this.JobReservationModel.find({ employerId })
+    let userReservations = await this.JobReservationModel.find({ employerId }).populate("jobFormId")
     for (let r of userReservations) {
       const currentTime = new Date().getTime()
       if (currentTime - r.startDate.getTime() <= RESERVATION_DURATION) {
