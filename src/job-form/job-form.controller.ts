@@ -305,18 +305,43 @@ export class JobFormController {
             sentDate: currentDate.toISOString()
           }
         }
-      }, { new: true })
+      }, { new: true }).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
     }
 
     if (employeeFeedback) {
       return await this.JobReservationModel.findByIdAndUpdate(reservationId, {
         $set: {
           employeeFeedback: {
-            textContent: employerFeedback,
+            textContent: employeeFeedback,
             sentDate: currentDate.toISOString()
           }
         }
-      }, { new: true })
+      }, { new: true }).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
     }
+  }
+
+  @Post("job-reservation/get-by-id")
+  async getJobReservationById(
+    @Body("reservationId") reservationId: string
+  ) {
+    return await this.JobReservationModel.findById(reservationId).populate("jobFormId").populate({
+      path: "employerId",
+      select: {
+        company: 1,
+        email: 1,
+      }
+    })
   }
 }
