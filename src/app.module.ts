@@ -21,6 +21,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JobFormModule } from './job-form/job-form.module';
 import { AdminModule } from './admin/admin.module';
+import { TPaymentsModule } from './t-payments/t-payments.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { AdminModule } from './admin/admin.module';
     VideoModule,
     JobFormModule,
     AdminModule,
+    TPaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService,
