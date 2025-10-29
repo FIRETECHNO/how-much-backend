@@ -61,6 +61,8 @@ export class TPaymentsController {
     @Body() tbankNotification: EmployerNotification,
     @Res() res: Response
   ) {
+    console.log(tbankNotification);
+
     // ok status
     return res.status(HttpStatus.OK).send("OK")
     // error status
