@@ -61,10 +61,25 @@ export class TPaymentsController {
     @Body() tbankNotification: EmployerNotification,
     @Res() res: Response
   ) {
-    console.log(tbankNotification);
+    console.log("tbankNotification: ", tbankNotification);
+    try {
+      if (tbankNotification.Status == "CONFIRMED") {
+        await this.EmployerPaymentOrderModel.findByIdAndUpdate(tbankNotification.OrderId, {
+          status: tbankNotification.Status,
+          payment: {
+            TerminalKey: tbankNotification.TerminalKey,
+            Amount: tbankNotification.Amount,
+            Success: tbankNotification.Success,
+            Status: tbankNotification.Status,
+            Token: tbankNotification.Token,
+            PaymentId: tbankNotification.PaymentId,
+          }
+        })
+        return res.status(HttpStatus.OK).send("OK")
+      }
+    } catch (error) {
 
-    // ok status
-    return res.status(HttpStatus.OK).send("OK")
+    }
     // error status
     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send()
   }

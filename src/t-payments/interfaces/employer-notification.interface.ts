@@ -5,4 +5,5 @@ export interface EmployerNotification {
   Success: boolean
   Status: string
   Token: string // подпись
+  PaymentId: number
 }
