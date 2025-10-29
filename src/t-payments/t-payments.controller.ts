@@ -28,6 +28,8 @@ export class TPaymentsController {
     }
 
     let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount)
+    console.log(result);
+
     if (result != null) {
       let orderFinal = await this.EmployerPaymentOrderModel.findByIdAndUpdate(
         result.OrderId,
