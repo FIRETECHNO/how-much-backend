@@ -52,13 +52,9 @@ export class TPaymentsService {
     console.log(process.env.T_BANK_PAYMENT_INIT_URL);
     console.log(reqBody);
 
-    try {
-      let res = await firstValueFrom(
-        this.httpService.post(process.env.T_BANK_PAYMENT_INIT_URL, reqBody)
-      );
-      return res.data;
-    } catch (error) {
-      return null
-    }
+    let res = await firstValueFrom(
+      this.httpService.post(process.env.T_BANK_PAYMENT_INIT_URL, reqBody)
+    );
+    return res.data;
   }
 }
