@@ -10,7 +10,7 @@ export class TPaymentsService {
   constructor(private readonly httpService: HttpService) { }
 
   async createPaymentLink(
-    orderId: string, price: number,
+    orderId: string, price: number, email: string,
     // optional
     quantity: number = 1,
     name: string = "Доступ к платформе",
@@ -44,7 +44,9 @@ export class TPaymentsService {
           Quantity: quantity,
           Amount: price * quantity,
           Tax: tax
-        }]
+        }],
+        Taxation: tax,
+        Email: email
       }
     }
     console.log(process.env.T_BANK_PAYMENT_INIT_URL);

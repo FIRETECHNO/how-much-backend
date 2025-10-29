@@ -20,6 +20,7 @@ export class TPaymentsController {
   async createEmployerOrder(
     @Body("employerId") employerId: string,
     @Body("amount") amount: number,
+    @Body("email") email: string,
   ) {
     let order = await this.EmployerPaymentOrderModel.create({ user: employerId })
 
@@ -27,10 +28,10 @@ export class TPaymentsController {
       throw ApiError.BadRequest("Ошибка при создании платежа")
     }
 
-    let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount)
+    let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount, email)
     console.log(result);
 
-    if (result != null) {
+    if (result.Success) {
       let orderFinal = await this.EmployerPaymentOrderModel.findByIdAndUpdate(
         result.OrderId,
         {
