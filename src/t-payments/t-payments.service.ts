@@ -20,7 +20,7 @@ export class TPaymentsService {
 
     let tokenPayloadObject = {
       Amount: price * quantity,
-      NotificationURL: notificationURL,
+      // NotificationURL: notificationURL,
       OrderId: orderId,
       Password: process.env.T_BANK_TERMINAL_PASSWORD,
       TerminalKey: process.env.T_BANK_TERMINAL_ID,
