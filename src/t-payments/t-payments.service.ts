@@ -45,7 +45,7 @@ export class TPaymentsService {
           Amount: price * quantity,
           Tax: tax
         }],
-        Taxation: tax,
+        Taxation: "usn_income",
         Email: email
       }
     }
