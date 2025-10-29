@@ -25,7 +25,10 @@ export class TPaymentsService {
       Password: process.env.T_BANK_TERMINAL_PASSWORD,
       TerminalKey: process.env.T_BANK_TERMINAL_ID,
     }
+    console.log(tokenPayloadObject);
+
     let tokenPayloadStr = Object.values(tokenPayloadObject).join('');
+    console.log(tokenPayloadStr);
 
     const Token = crypto.createHash('sha256')
       .update(tokenPayloadStr, 'utf8')
