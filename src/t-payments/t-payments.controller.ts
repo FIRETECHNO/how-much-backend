@@ -55,6 +55,17 @@ export class TPaymentsController {
     return null;
   }
 
+  @Post("get-last-user-payment")
+  async checkSubscription(
+    @Body("userId") userId: string
+  ) {
+    try {
+      return await this.EmployerPaymentOrderModel.findOne({ user: userId })
+        .sort({ updatedAt: -1 });
+    } catch (error) {
+      return null
+    }
+  }
 
   @Post("employer-callback")
   async create(
