@@ -7,7 +7,6 @@ RUN npm ci
 
 COPY . .
 
-# Сборка NestJS
 RUN npm run build
 
 # ---------- Этап продакшена ----------
@@ -19,6 +18,9 @@ RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 4000
+ENV NODE_ENV=production
+ENV PORT=3037
+
+EXPOSE 3037
 
 CMD ["node", "dist/main.js"]
