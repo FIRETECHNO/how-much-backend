@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+dotenv.config();
 
-dotenv.config(); // Ensure dotenv is loaded
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -13,37 +13,34 @@ import { RolesModule } from './roles/roles.module';
 import { S3Module } from './s3/s3.module';
 import { AppStateModule } from './app-state/app-state.module';
 import { MailModule } from './mail/mail.module';
-import { APP_GUARD } from '@nestjs/core'
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
+import { ThrottlerModule } from '@nestjs/throttler';
 import { VideoModule } from './video/video.module';
-
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JobFormModule } from './job-form/job-form.module';
 import { AdminModule } from './admin/admin.module';
 import { TPaymentsModule } from './t-payments/t-payments.module';
+import { EmployeeBotModule } from './employee-bot/employee-bot.module';
+import { ThrottlerAutoModule } from './common/throttler-auto.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot(
-      {
-        rootPath: join(__dirname, '..', 'public'),
-        serveRoot: '/static/', // This is the route you will use to access your files 
-      }
-    ),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/static/',
+    }),
     ThrottlerModule.forRoot([{
       ttl: 1000,
       limit: 20,
-      blockDuration: 10 * 60000
+      blockDuration: 10 * 60000,
     }]),
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ThrottlerAutoModule,
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.MONGO_URL, {
       connectionFactory: (connection) => {
-        connection.plugin(require('mongoose-autopopulate'))
-        return connection
-      }
+        connection.plugin(require('mongoose-autopopulate'));
+        return connection;
+      },
     }),
     AuthModule,
     TokenModule,
@@ -56,12 +53,9 @@ import { TPaymentsModule } from './t-payments/t-payments.module';
     JobFormModule,
     AdminModule,
     TPaymentsModule,
+    EmployeeBotModule,
   ],
   controllers: [AppController],
-  providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }],
+  providers: [AppService], // ← без APP_GUARD!
 })
 export class AppModule { }
