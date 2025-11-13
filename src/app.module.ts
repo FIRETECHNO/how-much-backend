@@ -23,6 +23,7 @@ import { TPaymentsModule } from './t-payments/t-payments.module';
 import { EmployeeBotModule } from './employee-bot/employee-bot.module';
 import { ThrottlerAutoModule } from './common/throttler-auto.module';
 import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-request.module';
+import { InvitesModule } from './invites/invites.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-
     TPaymentsModule,
     EmployeeBotModule,
     JobFormFillRequestModule,
+    InvitesModule,
   ],
   controllers: [AppController],
   providers: [AppService], // ← без APP_GUARD!

@@ -12,4 +12,5 @@ export interface User {
   roles: Role[]
   company: null | CompanyFromDadata
   isModerated: boolean
+  inviteToken: string | null
 }

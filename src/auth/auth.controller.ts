@@ -17,11 +17,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, Types } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
 import { JobFormClass } from 'src/job-form/schemas/job-form.schema';
+import { InvitesService } from 'src/invites/invites.service';
 @Controller('auth')
 export class AuthController {
 	constructor(
 		private AuthService: AuthService,
 		private mailService: MailService,
+		private invitesService: InvitesService,
 		@InjectModel('User') private UserModel: Model<UserClass>,
 		@InjectModel("JobForm") private JobFormModel: Model<JobFormClass>
 	) { }
@@ -62,6 +64,9 @@ export class AuthController {
 
 		let refreshToken = userData.refreshToken
 		delete userData.refreshToken
+
+		if (String(user.roles[0]) == "manager" && user?.inviteToken)
+			await this.invitesService.consume(user.inviteToken, userData.user._id);
 
 		res.cookie(
 			'refreshToken',
@@ -274,5 +279,20 @@ export class AuthController {
 		if (filenames.length == 0) return
 
 		return await this.UserModel.findByIdAndUpdate(userId, { $set: { avatars: [filenames[0]] } });
+	}
+
+	@Throttle({
+		default: {
+			ttl: 60000,
+			limit: 4,
+			blockDuration: 5 * 60000
+		}
+	})
+	@HttpCode(HttpStatus.OK)
+	@Post("validate-manager-invite-token")
+	async validateManagerInviteToken(
+		@Body("inviteToken") inviteToken: string
+	) {
+		return false;
 	}
 }
