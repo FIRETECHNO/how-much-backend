@@ -22,6 +22,7 @@ import { AdminModule } from './admin/admin.module';
 import { TPaymentsModule } from './t-payments/t-payments.module';
 import { EmployeeBotModule } from './employee-bot/employee-bot.module';
 import { ThrottlerAutoModule } from './common/throttler-auto.module';
+import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-request.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ThrottlerAutoModule } from './common/throttler-auto.module';
     AdminModule,
     TPaymentsModule,
     EmployeeBotModule,
+    JobFormFillRequestModule,
   ],
   controllers: [AppController],
   providers: [AppService], // ← без APP_GUARD!

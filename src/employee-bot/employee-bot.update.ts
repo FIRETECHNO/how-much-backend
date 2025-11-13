@@ -17,7 +17,12 @@ function isTextMessage(message: Message): message is Message.TextMessage {
 @Injectable()
 export class EmployeeBotUpdate {
   private readonly logger = new Logger(EmployeeBotUpdate.name);
-  private readonly VACANCIES: string[] = ['Маркетолог', 'Продажи', 'Ассистент', 'Другое'];
+  private readonly VACANCIES: string[] = [
+    'Продажи',
+    'Маркетинг',
+    'Ассистент',
+    'Другое'
+  ];
   private readonly BASE_URL = new URL('registration/employee', process.env.CLIENT_URL).toString();
 
   @Start()

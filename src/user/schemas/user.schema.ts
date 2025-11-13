@@ -27,6 +27,13 @@ export class UserClass {
   password: string;
 
   @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  tgId: number
+
+  @Prop({
     type: Array,
     default: [],
     required: false,
