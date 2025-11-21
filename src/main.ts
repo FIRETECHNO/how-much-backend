@@ -11,8 +11,8 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  app.enableCors({ 
-    origin: [process.env.CLIENT_URL, 'https://grishadzyin.ru'],
+  app.enableCors({
+    origin: [process.env.CLIENT_URL, 'http://localhost:3011'],
     credentials: true
   })
   app.useGlobalFilters(new HttpExceptionFilter())

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { sessionMiddleware } from './session.middleware';
 import { EmployeeBotUpdate } from './employee-bot.update';
+import { EmployeeBotService } from './employee-bot.service';
 
 const botToken = process.env.TG_EMPLOYEE_REGISTRATION_BOT_TOKEN;
 if (!botToken) {
@@ -19,6 +20,7 @@ if (!botToken) {
       middlewares: [sessionMiddleware()], // ← обратите внимание: вызываем и передаём результат
     }),
   ],
-  providers: [EmployeeBotUpdate],
+  providers: [EmployeeBotUpdate, EmployeeBotService],
+  exports: [EmployeeBotService]
 })
 export class EmployeeBotModule { }
