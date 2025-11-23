@@ -107,7 +107,7 @@ export class JobFormFillRequestController {
   @Post("get-all")
   async getAllRequests() {
     return await this.JobFormFillRequestModel
-      .find({ startDate: { $gte: new Date() }, manager: null })
+      .find({ startDate: { $gte: Date.now() }, manager: null })
       .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
       .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
   }
@@ -169,7 +169,7 @@ export class JobFormFillRequestController {
   async getByManager(
     @Body("manager") manager: string
   ) {
-    return await this.JobFormFillRequestModel.find({ manager })
+    return await this.JobFormFillRequestModel.find({ manager, startDate: { $gte: Date.now() }, })
       .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
       .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
   }
