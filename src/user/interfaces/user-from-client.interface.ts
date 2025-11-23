@@ -7,6 +7,7 @@ export interface UserFromClient {
   email: string
   password: string
   tgId: number | null
+  tgUsername: string | null
   roles: Role[]
   company: null | CompanyFromDadata
 }

@@ -34,6 +34,13 @@ export class UserClass {
   tgId: number
 
   @Prop({
+    type: String,
+    required: false,
+    default: null
+  })
+  tgUsername: string
+
+  @Prop({
     type: Array,
     default: [],
     required: false,

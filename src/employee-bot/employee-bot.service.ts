@@ -40,6 +40,6 @@ export class EmployeeBotService implements OnModuleInit {
     buttons: any[][],
   ): Promise<void> {
     const replyMarkup = { inline_keyboard: buttons };
-    await this.sendMessage(telegramId, text, { reply_markup: replyMarkup });
+    await this.sendMessage(telegramId, text, { reply_markup: replyMarkup, parse_mode: 'Markdown' });
   }
 }

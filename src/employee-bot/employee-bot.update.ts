@@ -33,10 +33,13 @@ export class EmployeeBotUpdate {
       return;
     }
 
+    // Сохраняем username (может быть undefined → приводим к null)
+    const tgUsername = ctx.from.username || null;
 
     Object.assign(ctx.session, {
       step: 'name',
-      tgId, // Сохраняем tgId в сессии (на всякий случай)
+      tgId,
+      tgUsername, // ← добавлено
       name: undefined,
       vacancy: undefined,
       email: undefined,
@@ -57,9 +60,12 @@ export class EmployeeBotUpdate {
       return;
     }
 
-    // Убедимся, что tgId есть в сессии (на случай, если /start не вызывался)
+    // Обновляем tgId и tgUsername при каждом сообщении (на случай, если изменились)
     if (!ctx.session.tgId) {
       ctx.session.tgId = tgId;
+    }
+    if (ctx.session.tgUsername === undefined) {
+      ctx.session.tgUsername = ctx.from.username || null;
     }
 
     const text = ctx.message.text.trim();
@@ -111,6 +117,7 @@ export class EmployeeBotUpdate {
         vacancy: ctx.session.vacancy!,
         email: ctx.session.email,
         tgId: String(ctx.session.tgId),
+        ...(ctx.session.tgUsername && { tgUsername: ctx.session.tgUsername }),
       });
 
       const link = `${this.BASE_URL}?${params.toString()}`;

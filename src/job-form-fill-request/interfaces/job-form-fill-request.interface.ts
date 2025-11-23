@@ -3,6 +3,7 @@ export interface JobFormFillRequest {
   employee: string
   startDate: string | null
   endDate: string | null
+  manager: string | null
 }
 
 export interface JobFormFillRequestDB extends JobFormFillRequest {

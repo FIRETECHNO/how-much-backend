@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { JobFormFillRequestClass } from './schemas/job-form-fill-request.schema';
 import { JobFormFillRequest } from './interfaces/job-form-fill-request.interface';
 import { EmployeeBotService } from 'src/employee-bot/employee-bot.service';
+import type { User } from "../user/interfaces/user.interface"
 
 
 @Controller('job-form-fill-request')
@@ -58,7 +59,7 @@ export class JobFormFillRequestController {
   }
   @Post("create")
   async create(
-    @Body() jobFormFillRequest: JobFormFillRequest,
+    @Body("request") jobFormFillRequest: JobFormFillRequest,
   ) {
     return await this.JobFormFillRequestModel.create(jobFormFillRequest)
   }
@@ -81,7 +82,7 @@ export class JobFormFillRequestController {
 Мы получили ваше расписание и скоро свяжемся с вами для подтверждения.
 
 Спасибо, что вы с нами! 🙏`
-      await this.employeeBotService.sendMessage(tgId, message);
+      await this.employeeBotService.sendMessage(tgId, message, { parse_mode: 'Markdown' });
     }
 
     return updateResult
@@ -101,5 +102,75 @@ export class JobFormFillRequestController {
     return await this.JobFormFillRequestModel.find({
       employee: employeeId,
     })
+  }
+
+  @Post("get-all")
+  async getAllRequests() {
+    return await this.JobFormFillRequestModel
+      .find({ startDate: { $gte: new Date() }, manager: null })
+      .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
+      .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
+  }
+
+  // @Post("set-manager")
+  // async setManager(
+  //   @Body("manager") manager: string,
+  //   @Body("managerName") managerName: string,
+  //   @Body("jobRequestId") jobRequestId: string,
+  //   @Body("employeeTgId") employeeTgId: User["tgId"],
+
+  // ) {
+  //   // jobRequestId,
+  //   //     employeeTgId,
+  //   //     manager,
+  //   //     managerName
+
+  //   return await this.JobFormFillRequestModel.findByIdAndUpdate(jobRequestId, { $set: { manager } })
+  // }
+
+  @Post("set-manager")
+  async setManager(
+    @Body("manager") manager: string,
+    @Body("managerName") managerName: string,
+    @Body("jobRequestId") jobRequestId: string,
+    @Body("employeeTgId") employeeTgId: number, // ← number, а не User["tgId"]
+  ) {
+    // Обновляем заявку
+    const updatedRequest = await this.JobFormFillRequestModel.findByIdAndUpdate(
+      jobRequestId,
+      { $set: { manager } },
+      { new: true }
+    );
+
+    // Отправляем уведомление в Telegram
+    if (employeeTgId) {
+      try {
+        await this.employeeBotService.sendMessage(
+          employeeTgId,
+          `👋 Здравствуйте!
+
+Ваша заявка на позицию *${updatedRequest.job}* принята.
+
+С вами свяжется рекрутер: *${managerName}*.
+
+Ожидайте личного сообщения в ближайшее время!`,
+          { parse_mode: 'Markdown' }
+        );
+      } catch (error) {
+        console.error(`Не удалось отправить Telegram-уведомление сотруднику ${employeeTgId}:`, error.message);
+        // Логируем, но не прерываем выполнение
+      }
+    }
+
+    return updatedRequest;
+  }
+
+  @Post("get-by-manager")
+  async getByManager(
+    @Body("manager") manager: string
+  ) {
+    return await this.JobFormFillRequestModel.find({ manager })
+      .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
+      .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
   }
 }
