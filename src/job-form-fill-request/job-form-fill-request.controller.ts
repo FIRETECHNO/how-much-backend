@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { JobFormFillRequestService } from './job-form-fill-request.service';
 
 // all about MongoDB
@@ -8,6 +8,7 @@ import { JobFormFillRequestClass } from './schemas/job-form-fill-request.schema'
 import { JobFormFillRequest } from './interfaces/job-form-fill-request.interface';
 import { EmployeeBotService } from 'src/employee-bot/employee-bot.service';
 import type { User } from "../user/interfaces/user.interface"
+import { UserClass } from 'src/user/schemas/user.schema';
 
 
 @Controller('job-form-fill-request')
@@ -16,6 +17,7 @@ export class JobFormFillRequestController {
     private readonly jobFormFillRequestService: JobFormFillRequestService,
     private readonly employeeBotService: EmployeeBotService,
     @InjectModel('JobFormFillRequest') private JobFormFillRequestModel: Model<JobFormFillRequestClass>,
+    @InjectModel('User') private UserModel: Model<UserClass>,
   ) { }
 
   // Вызывается при регистрации employee, когда он пришел по ссылке вида:
@@ -172,5 +174,80 @@ export class JobFormFillRequestController {
     return await this.JobFormFillRequestModel.find({ manager, startDate: { $gte: Date.now() }, })
       .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
       .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
+  }
+
+  // @Get("possible-time-slots")
+  // async getPossibleTimeSlots() {
+  //   let adminEmails = process.env.ADMIN_EMAILS.split(",")
+
+  //   let managers = await this.UserModel.find({ roles: "manager", email: { "$nin": adminEmails } })
+  //   let managerIds = managers.map((m) => m._id.toString());
+
+  //   console.log(managers);
+
+  //   let allTakenSlots = await this.JobFormFillRequestModel.find({ startDate: { "$gte": Date.now() } })
+
+  //   for (let slot of allTakenSlots) {
+  //     let managersInUseForOneSlot = 0;
+  //     for (let managerId of managerIds) {
+  //       if (slot.manager.toString() == managerId) {
+  //         managersInUseForOneSlot++;
+  //       }
+  //     }
+
+  //   }
+
+  //   return null;
+  // }
+
+  @Get("possible-time-slots")
+  async getPossibleTimeSlots() {
+    const adminEmails = process.env.ADMIN_EMAILS.split(",");
+
+    // 1. Получаем всех менеджеров
+    const managers = await this.UserModel.find({
+      roles: "manager",
+      email: { $nin: adminEmails }
+    });
+
+    const totalManagers = managers.length;
+
+    // 2. Получаем все занятые слоты
+    const allTakenSlots = await this.JobFormFillRequestModel.find({
+      startDate: { "$gte": Date.now() }
+    });
+
+    // Группируем по startDate
+    const slotsMap = new Map<string, typeof allTakenSlots>();
+
+    for (const slot of allTakenSlots) {
+      const key = slot.startDate.toString();
+
+      if (!slotsMap.has(key)) {
+        slotsMap.set(key, []);
+      }
+
+      slotsMap.get(key)!.push(slot);
+    }
+
+    // 3. Формируем ответ
+    const result: { startDate: string; availableManagers: number }[] = [];
+
+    for (const [dateKey, slots] of slotsMap.entries()) {
+      let managersInUse = new Set();
+      for (let s of slots) {
+        if (s.manager != null) {
+          managersInUse.add(s.manager);
+        }
+      }
+      const available = totalManagers - managersInUse.size;
+
+      result.push({
+        startDate: slots[0].startDate.toISOString(),
+        availableManagers: available
+      });
+    }
+
+    return result;
   }
 }

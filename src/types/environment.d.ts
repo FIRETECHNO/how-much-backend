@@ -19,6 +19,8 @@ declare global {
       YC_SECRET: string
       YC_BUCKET_NAME: string
 
+      ADMIN_EMAILS: string
+
       TG_EMPLOYEE_REGISTRATION_BOT_TOKEN: string
 
       API_URL: string
