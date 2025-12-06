@@ -161,21 +161,36 @@ export class JobFormFillRequestController {
 
         let startDateObj = new Date(updatedRequest.startDate)
         let startDate = startDateObj.getTime();
-        let delta = 30 * 60 * 1000;
-
-        const hours = startDateObj.getHours().toString().padStart(2, '0');
-        const minutes = startDateObj.getMinutes().toString().padStart(2, '0');
+        let notificationDelta = 2 * 60 * 60 * 1000;
 
 
-        const reminderMsg = `👋 Собеседование в *${hours}:${minutes}*\n` +
+        const timeString = startDateObj.toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Europe/Moscow', // Moscow timezone
+        });
+
+        const reminderMsg = `👋 Собеседование в *${timeString} по МСК*\n` +
           `Ваш рекрутер: *${managerName}* ждет вас!`;
+
+        let confirmUrl = new URL(`/employee/confirm-job-form-fill-request?_id=${jobRequestId}`, process.env.CLIENT_URL).toString()
 
         await this.employeeBotService.scheduleMessageAt(
           employeeTgId,
           reminderMsg,
           Date.now() + 20000,
-          // new Date(startDate - delta),
-          { parse_mode: 'Markdown' }
+          // new Date(startDate - notificationDelta),
+          {
+            parse_mode: 'Markdown', buttons: [
+              [
+                {
+                  text: '📹 Выбрать время для интервью',
+                  url: confirmUrl,
+                },
+              ],
+            ]
+          }
         );
       } catch (error) {
         console.error(`Не удалось отправить Telegram-уведомление сотруднику ${employeeTgId}:`, error.message);
