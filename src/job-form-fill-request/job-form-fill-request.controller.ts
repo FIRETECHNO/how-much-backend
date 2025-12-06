@@ -158,9 +158,27 @@ export class JobFormFillRequestController {
 Ожидайте личного сообщения в ближайшее время!`,
           { parse_mode: 'Markdown' }
         );
+
+        let startDateObj = new Date(updatedRequest.startDate)
+        let startDate = startDateObj.getTime();
+        let delta = 30 * 60 * 1000;
+
+        const hours = startDateObj.getHours().toString().padStart(2, '0');
+        const minutes = startDateObj.getMinutes().toString().padStart(2, '0');
+
+
+        const reminderMsg = `👋 Собеседование в *${hours}:${minutes}*\n` +
+          `Ваш рекрутер: *${managerName}* ждет вас!`;
+
+        await this.employeeBotService.scheduleMessageAt(
+          employeeTgId,
+          reminderMsg,
+          Date.now() + 20000,
+          // new Date(startDate - delta),
+          { parse_mode: 'Markdown' }
+        );
       } catch (error) {
         console.error(`Не удалось отправить Telegram-уведомление сотруднику ${employeeTgId}:`, error.message);
-        // Логируем, но не прерываем выполнение
       }
     }
 

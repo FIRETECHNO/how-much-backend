@@ -27,6 +27,9 @@ declare global {
       T_BANK_TERMINAL_ID: string
       T_BANK_TERMINAL_PASSWORD: string
       T_BANK_PAYMENT_INIT_URL: string
+
+      REDIS_HOST: string
+      REDIS_PORT: string
     }
   }
 }

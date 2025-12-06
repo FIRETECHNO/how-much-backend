@@ -1,10 +1,17 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, Logger, Inject } from '@nestjs/common';
 import { Telegraf } from 'telegraf';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class EmployeeBotService implements OnModuleInit {
   private bot: Telegraf;
   private readonly logger = new Logger(EmployeeBotService.name);
+
+  constructor(
+    @Inject('MESSAGE_QUEUE')
+    private readonly queue: Queue,
+  ) { }
+
 
   onModuleInit() {
     const token = process.env.TG_EMPLOYEE_REGISTRATION_BOT_TOKEN;
@@ -41,5 +48,34 @@ export class EmployeeBotService implements OnModuleInit {
   ): Promise<void> {
     const replyMarkup = { inline_keyboard: buttons };
     await this.sendMessage(telegramId, text, { reply_markup: replyMarkup, parse_mode: 'Markdown' });
+  }
+
+  async scheduleMessageAt(
+    telegramId: number,
+    text: string,
+    date: Date | number,
+    options: any = {},
+  ) {
+    const targetTs = date instanceof Date ? date.getTime() : date;
+    const now = Date.now();
+
+    const delayMs = targetTs - now;
+
+    if (delayMs <= 0) {
+      this.logger.warn(
+        `Время ${new Date(targetTs).toISOString()} уже прошло — сообщение отправляется сразу`,
+      );
+      return this.sendMessage(telegramId, text, options);
+    }
+
+    await this.queue.add(
+      'send-delayed-message',
+      { telegramId, text, options },
+      { delay: delayMs },
+    );
+
+    this.logger.log(
+      `Сообщение запланировано на ${new Date(targetTs).toISOString()} (через ${delayMs} мс)`,
+    );
   }
 }

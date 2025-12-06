@@ -1,26 +1,23 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { BullMQModule } from 'src/queue/bullmq.module';
+import { EmployeeBotService } from './employee-bot.service';
+import { EmployeeBotUpdate } from './employee-bot.update';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { sessionMiddleware } from './session.middleware';
-import { EmployeeBotUpdate } from './employee-bot.update';
-import { EmployeeBotService } from './employee-bot.service';
 
 const botToken = process.env.TG_EMPLOYEE_REGISTRATION_BOT_TOKEN;
-if (!botToken) {
-  throw new Error('TG_EMPLOYEE_REGISTRATION_BOT_TOKEN is not set');
-}
+if (!botToken) throw new Error('TG_EMPLOYEE_REGISTRATION_BOT_TOKEN is not set');
 
 @Module({
   imports: [
     TelegrafModule.forRoot({
       token: botToken,
-      launchOptions: {
-        dropPendingUpdates: true,
-      },
-      // Передаём middleware НАПРЯМУЮ как функцию
-      middlewares: [sessionMiddleware()], // ← обратите внимание: вызываем и передаём результат
+      launchOptions: { dropPendingUpdates: true },
+      middlewares: [sessionMiddleware()],
     }),
+    forwardRef(() => BullMQModule),
   ],
-  providers: [EmployeeBotUpdate, EmployeeBotService],
-  exports: [EmployeeBotService]
+  providers: [EmployeeBotService, EmployeeBotUpdate],
+  exports: [EmployeeBotService],
 })
 export class EmployeeBotModule { }
