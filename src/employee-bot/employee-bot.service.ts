@@ -46,8 +46,12 @@ export class EmployeeBotService implements OnModuleInit {
     text: string,
     buttons: any[][],
   ): Promise<void> {
-    const replyMarkup = { inline_keyboard: buttons };
-    await this.sendMessage(telegramId, text, { reply_markup: replyMarkup, parse_mode: 'Markdown' });
+    try {
+      const replyMarkup = { inline_keyboard: buttons };
+      await this.sendMessage(telegramId, text, { reply_markup: replyMarkup, parse_mode: 'Markdown' });
+    } catch (error) {
+
+    }
   }
 
   async scheduleMessageAt(

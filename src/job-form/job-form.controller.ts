@@ -10,6 +10,8 @@ import { JobReservationClass } from './schemas/job-reservation.schema';
 import ApiError from 'src/exceptions/errors/api-error';
 
 import { Types } from "mongoose"
+import { EmployeeBotService } from 'src/employee-bot/employee-bot.service';
+import { UserClass } from 'src/user/schemas/user.schema';
 
 
 const RESERVATION_DURATION = 30 * 60 * 1000
@@ -17,12 +19,28 @@ const RESERVATION_DURATION = 30 * 60 * 1000
 @Controller('job-form')
 export class JobFormController {
   constructor(
+    private readonly employeeBotService: EmployeeBotService,
     private readonly jobFormService: JobFormService,
     private readonly mailService: MailService,
     @InjectModel('JobForm') private JobFormModel: Model<JobFormClass>,
     @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
+    @InjectModel('User') private UserModel: Model<UserClass>,
   ) { }
 
+  async sendJobFormNotification(tgId: number) {
+    try {
+      const btns = [
+        [
+          {
+            text: '📹 Посмотреть отклик',
+            url: new URL("employee/job-forms", process.env.CLIENT_URL),
+          },
+        ],
+      ]
+      await this.employeeBotService.sendMessageWithButtons(tgId, "*Работодатель забронировал вашу анкету!*\n\nОжидайте звонка или сообщения", btns)
+    } catch (error) {
+    }
+  }
   @Post("create")
   async createJobForm(
     @Body("jobForm") jobForm: JobForm_client
@@ -163,8 +181,6 @@ export class JobFormController {
     @Body("employerId") employerId: string,
     @Body("employeeId") employeeId: string,
   ) {
-
-
     let jobForm = await this.JobFormModel.findById(jobFormId)
     if (!jobForm) throw ApiError.NotFound(`Анкета не найдена`)
 
@@ -177,18 +193,23 @@ export class JobFormController {
       }
     }
 
+    let employee = await this.UserModel.findById(employeeId)
+
     if (!jobForm.lastReservationDate) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
+      await this.sendJobFormNotification(employee.tgId)
       return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
     }
 
     const currentTime = new Date().getTime()
     const timeDifference = currentTime - jobForm.lastReservationDate.getTime()
 
+
     if (timeDifference > RESERVATION_DURATION) {
       jobForm.lastReservationDate = new Date(startDate)
       await jobForm.save();
+      await this.sendJobFormNotification(employee.tgId)
       return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
     }
 
