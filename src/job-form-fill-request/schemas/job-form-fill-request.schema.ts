@@ -3,7 +3,9 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type JobFormFillRequestDocument = HydratedDocument<JobFormFillRequestClass>;
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+})
 export class JobFormFillRequestClass {
   @Prop({
     type: String,
@@ -21,7 +23,8 @@ export class JobFormFillRequestClass {
   @Prop({
     type: Date,
     required: false,
-    default: null
+    default: null,
+    expires: 10 * 24 * 60 * 60,
   })
   endDate: Date;
 
