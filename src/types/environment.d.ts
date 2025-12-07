@@ -22,6 +22,7 @@ declare global {
       ADMIN_EMAILS: string
 
       TG_EMPLOYEE_REGISTRATION_BOT_TOKEN: string
+      TG_EMPLOYER_REGISTRATION_BOT_TOKEN: string
 
       API_URL: string
       T_BANK_TERMINAL_ID: string

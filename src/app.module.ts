@@ -24,6 +24,7 @@ import { EmployeeBotModule } from './employee-bot/employee-bot.module';
 import { ThrottlerAutoModule } from './common/throttler-auto.module';
 import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-request.module';
 import { InvitesModule } from './invites/invites.module';
+import { EmployerBotModule } from './employer-bot/employer-bot.module';
 
 @Module({
   imports: [
@@ -55,9 +56,10 @@ import { InvitesModule } from './invites/invites.module';
     JobFormModule,
     AdminModule,
     TPaymentsModule,
-    EmployeeBotModule,
     JobFormFillRequestModule,
     InvitesModule,
+    EmployeeBotModule,
+    EmployerBotModule,
   ],
   controllers: [AppController],
   providers: [AppService], // ← без APP_GUARD!
