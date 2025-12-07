@@ -182,14 +182,18 @@ export class JobFormFillRequestController {
           Date.now() + 20000,
           // new Date(startDate - notificationDelta),
           {
-            parse_mode: 'Markdown', buttons: [
-              [
-                {
-                  text: '📹 Выбрать время для интервью',
-                  url: confirmUrl,
-                },
-              ],
-            ]
+            parse_mode: 'Markdown',
+            reply_markup: {
+              inline_keyboard:
+                [
+                  [
+                    {
+                      text: '📹 Подтвердить собеседование',
+                      url: confirmUrl,
+                    },
+                  ],
+                ]
+            }
           }
         );
       } catch (error) {
@@ -282,5 +286,23 @@ export class JobFormFillRequestController {
     }
 
     return result;
+  }
+
+  @Post("get-by-id-for-confirmation")
+  async getByIdForConfirmation(
+    @Body("requestId") requestId: string,
+  ) {
+    return (await this.JobFormFillRequestModel.findById(requestId).exec())
+      .populate("manager", { select: ["name"] })
+  }
+
+  @Post("employee-confirm")
+  async employeeConfirm(
+    @Body("requestId") requestId: string,
+  ) {
+    return await this.JobFormFillRequestModel
+      .findOneAndUpdate({ _id: requestId, confirmedByEmployee: false },
+        { confirmedByEmployee: true },
+        { new: true })
   }
 }

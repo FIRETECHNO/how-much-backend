@@ -26,6 +26,12 @@ export class JobFormFillRequestClass {
   endDate: Date;
 
   @Prop({
+    type: Boolean,
+    default: false
+  })
+  confirmedByEmployee: boolean;
+
+  @Prop({
     type: Types.ObjectId,
     ref: "User",
     required: true,
