@@ -25,17 +25,21 @@ export class MailService {
   }
 
   public async sendUserConfirmation(user: any) {
-    // const url = `example.com/auth/confirm?token=${token}`;
-    await this.mailerService.sendMail({
-      to: user.email,
-      from: '"Команда проекта Сколько" <grishadzyin@gmail.com>', // override default from
-      subject: 'Спасибо за регистрацию',
-      template: './confirmation', // `.hbs` extension is appended automatically
-      context: { // ✏️ filling curly brackets with content
-        name: user.name,
-        // url,
-      },
-    });
+    try {
+      // const url = `example.com/auth/confirm?token=${token}`;
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: '"Команда проекта Сколько" <grishadzyin@gmail.com>', // override default from
+        subject: 'Спасибо за регистрацию',
+        template: './confirmation', // `.hbs` extension is appended automatically
+        context: { // ✏️ filling curly brackets with content
+          name: user.name,
+          // url,
+        },
+      });
+    } catch (error) {
+
+    }
   }
 
   public async sendOrderNotifications(userEmails: string[], order: any) {

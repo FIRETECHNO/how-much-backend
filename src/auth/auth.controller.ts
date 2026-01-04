@@ -60,7 +60,7 @@ export class AuthController {
 		);
 
 		if (process.env.NODE_ENV === 'production')
-			await this.mailService.sendUserConfirmation(user);
+			this.mailService.sendUserConfirmation(user);
 
 		let refreshToken = userData.refreshToken
 		delete userData.refreshToken
