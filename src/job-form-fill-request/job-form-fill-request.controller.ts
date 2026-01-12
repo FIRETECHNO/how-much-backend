@@ -1,12 +1,14 @@
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { JobFormFillRequestService } from './job-form-fill-request.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
 
 // all about MongoDB
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JobFormFillRequestClass } from './schemas/job-form-fill-request.schema';
 import { JobFormFillRequest } from './interfaces/job-form-fill-request.interface';
-import { EmployeeBotService } from 'src/employee-bot/employee-bot.service';
 import type { User } from "../user/interfaces/user.interface"
 import { UserClass } from 'src/user/schemas/user.schema';
 
@@ -15,9 +17,9 @@ import { UserClass } from 'src/user/schemas/user.schema';
 export class JobFormFillRequestController {
   constructor(
     private readonly jobFormFillRequestService: JobFormFillRequestService,
-    private readonly employeeBotService: EmployeeBotService,
     @InjectModel('JobFormFillRequest') private JobFormFillRequestModel: Model<JobFormFillRequestClass>,
     @InjectModel('User') private UserModel: Model<UserClass>,
+    private readonly httpService: HttpService,
   ) { }
 
   // Вызывается при регистрации employee, когда он пришел по ссылке вида:
@@ -54,7 +56,19 @@ export class JobFormFillRequestController {
         ],
       ];
 
-      await this.employeeBotService.sendMessageWithButtons(tgId, message, buttons);
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            reply_markup: { inline_keyboard: buttons },
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
     }
 
     return jobFormFillRequest
@@ -84,7 +98,18 @@ export class JobFormFillRequestController {
 Мы получили ваше расписание и скоро свяжемся с вами для подтверждения.
 
 Спасибо, что вы с нами! 🙏`
-      await this.employeeBotService.sendMessage(tgId, message, { parse_mode: 'Markdown' });
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
     }
 
     return updateResult
@@ -147,16 +172,23 @@ export class JobFormFillRequestController {
     // Отправляем уведомление в Telegram
     if (employeeTgId) {
       try {
-        await this.employeeBotService.sendMessage(
-          employeeTgId,
-          `👋 Здравствуйте!
+        await firstValueFrom(
+          this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+            botType: 'employee',
+            telegramId: employeeTgId,
+            text: `👋 Здравствуйте!
 
 Ваша заявка на позицию *${updatedRequest.job}* принята.
 
 С вами свяжется рекрутер: *${managerName}*.
 
 Ожидайте личного сообщения в ближайшее время!`,
-          { parse_mode: 'Markdown' }
+            options: {
+              parse_mode: 'Markdown'
+            }
+          }, {
+            headers: { 'x-api-key': process.env.TG_API_KEY }
+          })
         );
 
         let startDateObj = new Date(updatedRequest.startDate)
@@ -176,25 +208,29 @@ export class JobFormFillRequestController {
 
         let confirmUrl = new URL(`/employee/confirm-job-form-fill-request?_id=${jobRequestId}`, process.env.CLIENT_URL).toString()
 
-        await this.employeeBotService.scheduleMessageAt(
-          employeeTgId,
-          reminderMsg,
-          Date.now() + 20000,
-          // new Date(startDate - notificationDelta),
-          {
-            parse_mode: 'Markdown',
-            reply_markup: {
-              inline_keyboard:
-                [
-                  [
-                    {
-                      text: '📹 Подтвердить собеседование',
-                      url: confirmUrl,
-                    },
-                  ],
-                ]
+        const buttons =
+          [
+            [
+              {
+                text: '📹 Подтвердить собеседование',
+                url: confirmUrl,
+              },
+            ],
+          ]
+        await firstValueFrom(
+          this.httpService.post(new URL('/api/schedule', process.env.TG_API_URL).toString(), {
+            botType: 'employee',
+            telegramId: employeeTgId,
+            text: reminderMsg,
+            // new Date(startDate - notificationDelta),
+            timestamp: Date.now() + 20000,
+            options: {
+              parse_mode: 'Markdown',
+              reply_markup: { inline_keyboard: buttons },
             }
-          }
+          }, {
+            headers: { 'x-api-key': process.env.TG_API_KEY }
+          })
         );
       } catch (error) {
         console.error(`Не удалось отправить Telegram-уведомление сотруднику ${employeeTgId}:`, error.message);

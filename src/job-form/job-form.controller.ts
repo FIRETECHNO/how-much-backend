@@ -2,15 +2,18 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { JobFormService } from './job-form.service';
 import { MailService } from 'src/mail/mail.service';
 
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JobFormClass } from './schemas/job-form.schema';
 import { JobForm_client } from './interfaces/job-form.interface';
 import { JobReservationClass } from './schemas/job-reservation.schema';
 import ApiError from 'src/exceptions/errors/api-error';
+import { Throttle } from '@nestjs/throttler';
 
 import { Types } from "mongoose"
-import { EmployeeBotService } from 'src/employee-bot/employee-bot.service';
 import { UserClass } from 'src/user/schemas/user.schema';
 
 
@@ -19,17 +22,17 @@ const RESERVATION_DURATION = 30 * 60 * 1000
 @Controller('job-form')
 export class JobFormController {
   constructor(
-    private readonly employeeBotService: EmployeeBotService,
     private readonly jobFormService: JobFormService,
     private readonly mailService: MailService,
     @InjectModel('JobForm') private JobFormModel: Model<JobFormClass>,
     @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
     @InjectModel('User') private UserModel: Model<UserClass>,
+    private readonly httpService: HttpService,
   ) { }
 
   async sendJobFormNotification(tgId: number) {
     try {
-      const btns = [
+      const buttons = [
         [
           {
             text: '📹 Посмотреть отклик',
@@ -37,7 +40,22 @@ export class JobFormController {
           },
         ],
       ]
-      await this.employeeBotService.sendMessageWithButtons(tgId, "*Работодатель забронировал вашу анкету!*\n\nОжидайте звонка или сообщения", btns)
+
+      const message = "*Работодатель забронировал вашу анкету!*\n\nОжидайте звонка или сообщения"
+
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            reply_markup: { inline_keyboard: buttons },
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
     } catch (error) {
     }
   }

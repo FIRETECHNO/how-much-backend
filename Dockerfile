@@ -17,10 +17,12 @@ COPY package*.json ./
 RUN npm ci --only=production
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/telegram-bots ./src/telegram-bots
+COPY --from=builder /app/ecosystem.config.js ./ecosystem.config.js
 
 ENV NODE_ENV=production
 ENV PORT=3037
 
 EXPOSE 3037
 
-CMD ["node", "dist/main.js"]
+CMD ["npx", "pm2-runtime", "ecosystem.config.js"]

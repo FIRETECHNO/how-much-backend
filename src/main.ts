@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from './exceptions/http-exception.filter';
 // Load environment variables at the very beginning
 
 import * as cookieParser from 'cookie-parser';
+import { ThrottlerGuard } from '@nestjs/throttler';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)

@@ -21,16 +21,13 @@ declare global {
 
       ADMIN_EMAILS: string
 
-      TG_EMPLOYEE_REGISTRATION_BOT_TOKEN: string
-      TG_EMPLOYER_REGISTRATION_BOT_TOKEN: string
+      TG_API_KEY: string
+      TG_API_URL: string
 
       API_URL: string
       T_BANK_TERMINAL_ID: string
       T_BANK_TERMINAL_PASSWORD: string
       T_BANK_PAYMENT_INIT_URL: string
-
-      REDIS_HOST: string
-      REDIS_PORT: string
     }
   }
 }

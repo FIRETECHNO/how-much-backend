@@ -13,18 +13,17 @@ import { RolesModule } from './roles/roles.module';
 import { S3Module } from './s3/s3.module';
 import { AppStateModule } from './app-state/app-state.module';
 import { MailModule } from './mail/mail.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { VideoModule } from './video/video.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { JobFormModule } from './job-form/job-form.module';
 import { AdminModule } from './admin/admin.module';
 import { TPaymentsModule } from './t-payments/t-payments.module';
-import { EmployeeBotModule } from './employee-bot/employee-bot.module';
 import { ThrottlerAutoModule } from './common/throttler-auto.module';
 import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-request.module';
 import { InvitesModule } from './invites/invites.module';
-import { EmployerBotModule } from './employer-bot/employer-bot.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -34,7 +33,7 @@ import { EmployerBotModule } from './employer-bot/employer-bot.module';
     }),
     ThrottlerModule.forRoot([{
       ttl: 1000,
-      limit: 20,
+      limit: 6,
       blockDuration: 10 * 60000,
     }]),
     ThrottlerAutoModule,
@@ -58,10 +57,11 @@ import { EmployerBotModule } from './employer-bot/employer-bot.module';
     TPaymentsModule,
     JobFormFillRequestModule,
     InvitesModule,
-    EmployeeBotModule,
-    EmployerBotModule,
   ],
   controllers: [AppController],
-  providers: [AppService], // ← без APP_GUARD!
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
+  }],
 })
 export class AppModule { }

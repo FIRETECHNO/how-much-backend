@@ -1,0 +1,5486 @@
+=== ДАМП ПРОЕКТА ===
+Дата: 2026-01-12T06:11:49.539Z
+Путь: /home/jetgreen/Desktop/===СТАРТАПЫ===/how-much-backend
+=====================================
+
+
+
+=====================================
+Файл: .eslintrc.js
+=====================================
+
+module.exports = {
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: 'tsconfig.json',
+    tsconfigRootDir: __dirname,
+    sourceType: 'module',
+  },
+  plugins: ['@typescript-eslint/eslint-plugin'],
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+  ],
+  root: true,
+  env: {
+    node: true,
+    jest: true,
+  },
+  ignorePatterns: ['.eslintrc.js'],
+  rules: {
+    '@typescript-eslint/interface-name-prefix': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+};
+
+
+=====================================
+Файл: README.md
+=====================================
+
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
+
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
+
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+
+## Description
+
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Installation
+
+```bash
+$ npm install
+```
+
+## Running the app
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+```
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
+```
+
+## Support
+
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+
+## Stay in touch
+
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
+
+## License
+
+Nest is [MIT licensed](LICENSE).
+
+
+=====================================
+Файл: dump-project.js
+=====================================
+
+// dump-project.js
+const fs = require('fs');
+const path = require('path');
+
+const OUTPUT_FILE = 'project-dump.txt';
+const ROOT_DIR = process.cwd(); // Корень проекта — текущая директория
+
+// Папки и файлы, которые игнорируем
+const IGNORE_DIRS = new Set([
+  'node_modules',
+  '.git',
+  '.idea',
+  '.vscode',
+  'dist',
+  'build',
+  '.next',
+  'coverage',
+  '.husky',
+]);
+
+const IGNORE_FILES = new Set([
+  '.env',
+  '.env.local',
+  '.env.example',
+  'yarn.lock',
+  'package-lock.json',
+  '.gitignore',
+  OUTPUT_FILE, // чтобы не включить сам дамп
+]);
+
+// Расширения, которые будем включать (можно добавить/убрать)
+const INCLUDE_EXTENSIONS = new Set([
+  '.ts', '.tsx', '.js', '.jsx', '.json', '.md', '.yaml', '.yml',
+  '.html', '.css', '.scss', '.env.example', '.txt', '.graphql',
+]);
+
+let output = fs.createWriteStream(OUTPUT_FILE, { encoding: 'utf-8' });
+
+output.write(`=== ДАМП ПРОЕКТА ===\n`);
+output.write(`Дата: ${new Date().toISOString()}\n`);
+output.write(`Путь: ${ROOT_DIR}\n`);
+output.write(`=====================================\n\n`);
+
+function walk(dir) {
+  let files;
+  try {
+    files = fs.readdirSync(dir);
+  } catch (err) {
+    console.error(`Не удалось прочитать папку: ${dir}`);
+    return;
+  }
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file);
+    const relativePath = path.relative(ROOT_DIR, fullPath);
+    const stat = fs.statSync(fullPath);
+
+    // Игнорируем папки
+    if (stat.isDirectory()) {
+      if (IGNORE_DIRS.has(file)) {
+        console.log(`Пропуск папки: ${relativePath}`);
+        continue;
+      }
+      walk(fullPath);
+      continue;
+    }
+
+    // Игнорируем отдельные файлы
+    if (IGNORE_FILES.has(file)) {
+      console.log(`Пропуск файла: ${relativePath}`);
+      continue;
+    }
+
+    // Фильтр по расширению
+    const ext = path.extname(file).toLowerCase();
+    if (!INCLUDE_EXTENSIONS.has(ext) && !stat.isDirectory()) {
+      console.log(`Пропуск по расширению: ${relativePath}`);
+      continue;
+    }
+
+    // Читаем файл
+    let content = '';
+    try {
+      content = fs.readFileSync(fullPath, 'utf-8');
+    } catch (err) {
+      content = `<ОШИБКА ЧТЕНИЯ ФАЙЛА: ${err.message}>`;
+    }
+
+    // Записываем в дамп
+    output.write(`\n\n`);
+    output.write(`=====================================\n`);
+    output.write(`Файл: ${relativePath}\n`);
+    output.write(`=====================================\n\n`);
+    output.write(content);
+
+    if (!content.endsWith('\n')) output.write('\n');
+
+    console.log(`Добавлен: ${relativePath}`);
+  }
+}
+
+console.log('Начинаю сборку дампа проекта...');
+walk(ROOT_DIR);
+output.end();
+
+output.on('finish', () => {
+  console.log(`\nГотово! Всё записано в ${OUTPUT_FILE}`);
+});
+
+output.on('error', (err) => {
+  console.error('Ошибка записи файла:', err);
+});
+
+
+=====================================
+Файл: migrate-mongo-config.js
+=====================================
+
+import 'dotenv/config';
+
+const config = {
+  mongodb: {
+    url: process.env.MONGO_URL || "mongodb://localhost:27017",
+    databaseName: "how-much",
+    options: {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  },
+  migrationsDir: "migrations",
+  changelogCollectionName: "changelog",
+  migrationFileExtension: ".js",
+  moduleSystem: 'esm',
+
+  useFileHash: false,
+};
+
+export default config;
+
+
+=====================================
+Файл: migrations/20250929175044-add-is-moderated-field.js
+=====================================
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const up = async (db, client) => {
+    console.log("Applying migration (ESM): add-isModerated-to-users.up");
+    const usersCollection = db.collection('users');
+    const filter = { isModerated: { $exists: false } };
+    const update = { $set: { isModerated: false } };
+    const result = await usersCollection.updateMany(filter, update);
+    console.log(`Updated ${result.modifiedCount} documents.`);
+};
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const down = async (db, client) => {
+    console.log("Reverting migration (ESM): add-isModerated-to-users.down");
+    const usersCollection = db.collection('users');
+    const filter = { isModerated: false };
+    const update = { $unset: { isModerated: "" } };
+    const result = await usersCollection.updateMany(filter, update);
+    console.log(`Reverted ${result.modifiedCount} documents.`);
+};
+
+
+=====================================
+Файл: migrations/20250929180434-add-contacts-to-job-forms.js
+=====================================
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const up = async (db, client) => {
+    console.log("Applying migration: add-contacts-to-job-forms.up");
+    const jobFormsCollection = db.collection('job-forms');
+
+    const filter = {
+        $or: [
+            { phone: { $exists: false } },
+            { telegram: { $exists: false } },
+        ]
+    };
+
+    const update = {
+        $set: {
+            phone: 'не указан',
+            telegram: 'не указан',
+        }
+    };
+
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents in 'job-forms' collection.`);
+};
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const down = async (db, client) => {
+    console.log("Reverting migration: add-contacts-to-job-forms.down");
+
+    const jobFormsCollection = db.collection('job-forms');
+
+    const filter = {};
+
+    const update = {
+        $unset: {
+            phone: "",
+            telegram: "",
+        }
+    };
+
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents in 'job-forms' collection.`);
+};
+
+
+=====================================
+Файл: migrations/20251005100651-add-email-and-employee-id-to-jobform.js
+=====================================
+
+/**
+ * @param {import('mongodb').Db} db
+ * @param {import('mongodb').MongoClient} client
+ */
+export async function up(db, client) {
+    console.log("Applying migration: add-email-and-employeeid-to-jobforms.up");
+
+    // 1. Выбираем коллекцию 'jobforms'
+    const jobFormsCollection = db.collection('job-forms');
+
+    // 2. Определяем фильтр: ищем документы, у которых отсутствует
+    // хотя бы одно из полей: `email` ИЛИ `employeeId`.
+    const filter = {
+        $or: [
+            { email: { $exists: false } },
+            { employeeId: { $exists: false } },
+        ]
+    };
+
+    // 3. Определяем обновление: добавляем новые поля со значениями по умолчанию.
+    // Для `email` установим плейсхолдер, а для `employeeId` - `null`.
+    const update = {
+        $set: {
+            email: '', // Заглушка для email
+            employeeId: null,                  // null для ObjectId
+        }
+    };
+
+    // 4. Выполняем операцию `updateMany`
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents in 'jobforms' collection.`);
+}
+
+/**
+ * @param {import('mongodb').Db} db
+ * @param {import('mongodb').MongoClient} client
+ */
+export async function down(db, client) {
+    console.log("Reverting migration: add-email-and-employeeid-to-jobforms.down");
+
+    const jobFormsCollection = db.collection('job-forms');
+
+    // 1. Фильтр для отката (опционально, можно оставить пустым `{}`)
+    const filter = {};
+
+    // 2. Определяем обновление: УДАЛЯЕМ добавленные поля
+    const update = {
+        $unset: {
+            email: "",
+            employeeId: "",
+        }
+    };
+
+    // 3. Выполняем операцию
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents in 'jobforms' collection.`);
+}
+
+
+=====================================
+Файл: migrations/20251007071429-add-is-approved-to-job-form.js
+=====================================
+
+/**
+ * @param {import('mongodb').Db} db
+ * @param {import('mongodb').MongoClient} client
+ */
+export async function up(db, client) {
+    console.log("Applying migration: add-isApproved-to-job-forms.up");
+
+    // 1. Выбираем коллекцию. Mongoose по умолчанию создает имена в нижнем регистре
+    // и множественном числе (JobFormClass -> jobforms).
+    // Проверьте точное имя в вашей базе данных.
+    const jobFormsCollection = db.collection('job-forms');
+
+    // 2. Определяем фильтр: ищем все документы, у которых поле `isApproved` НЕ СУЩЕСТВУЕТ.
+    // Это предотвратит повторное обновление уже обработанных документов.
+    const filter = { isApproved: { $exists: false } };
+
+    // 3. Определяем обновление: добавляем поле `isApproved` со значением `false`.
+    const update = { $set: { isApproved: false } };
+
+    // 4. Выполняем операцию `updateMany`, чтобы обновить все найденные документы.
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents in 'jobforms' collection.`);
+}
+
+/**
+ * @param {import('mongodb').Db} db
+ * @param {import('mongodb').MongoClient} client
+ */
+export async function down(db, client) {
+    console.log("Reverting migration: add-isApproved-to-job-forms.down");
+
+    const jobFormsCollection = db.collection('job-forms');
+
+    // 1. Фильтр для отката: мы будем удалять поле у всех документов.
+    const filter = {};
+
+    // 2. Определяем обновление: УДАЛЯЕМ поле `isApproved` из документов.
+    const update = { $unset: { isApproved: "" } };
+
+    // 3. Выполняем операцию.
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents in 'jobforms' collection.`);
+}
+
+
+=====================================
+Файл: migrations/20251018063322-add-salary-exp-work-formta-to-job-forms.js
+=====================================
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const up = async (db, client) => {
+    console.log("Applying migration: add salary, experience, and workFormat to job-forms.up");
+
+    const jobFormsCollection = db.collection('job-forms');
+
+    // Ищем только те документы, где хотя бы одно из новых полей отсутствует.
+    // Это делает миграцию идемпотентной (безопасной для повторного запуска).
+    const filter = {
+        $or: [
+            { salaryFrom: { $exists: false } },
+            { salaryTo: { $exists: false } },
+            { experience: { $exists: false } },
+            { workFormat: { $exists: false } },
+        ]
+    };
+
+    // Устанавливаем новые поля.
+    // Для обязательных полей (experience, workFormat) необходимо задать значение по умолчанию,
+    // чтобы существующие документы не стали невалидными.
+    const update = {
+        $set: {
+            salaryFrom: null,
+            salaryTo: null,
+            experience: 'не указан', // Значение по умолчанию для обязательного поля
+            workFormat: 'не указан', // Значение по умолчанию для обязательного поля
+        }
+    };
+
+    const result = await jobFormsCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents in 'job-forms' collection.`);
+};
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const down = async (db, client) => {
+    console.log("Reverting migration: add salary, experience, and workFormat to job-forms.down");
+
+    const jobFormsCollection = db.collection('job-forms');
+
+    // Для отката мы просто удаляем добавленные поля из всех документов.
+    const update = {
+        $unset: {
+            salaryFrom: "",
+            salaryTo: "",
+            experience: "",
+            workFormat: "",
+        }
+    };
+
+    // Применяем ко всем документам. Оператор $unset не вызовет ошибки,
+    // если поля в каком-то документе уже отсутствуют.
+    const result = await jobFormsCollection.updateMany({}, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents in 'job-forms' collection.`);
+};
+
+
+=====================================
+Файл: migrations/20251019114735-add-feedback-to-job-reservations.js
+=====================================
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const up = async (db, client) => {
+    console.log("Applying migration: add feedback fields to job-reservations.up");
+
+    const reservationsCollection = db.collection('job-reservations');
+
+    // Ищем документы, где хотя бы одно из полей обратной связи отсутствует,
+    // чтобы сделать миграцию безопасной для повторного запуска (идемпотентной).
+    const filter = {
+        $or: [
+            { employerFeedback: { $exists: false } },
+            { employeeFeedback: { $exists: false } },
+        ]
+    };
+
+    // Устанавливаем новые поля с их дефолтной структурой.
+    const update = {
+        $set: {
+            employerFeedback: {
+                textContent: null,
+                sentDate: null
+            },
+            employeeFeedback: {
+                textContent: null,
+                sentDate: null
+            }
+        }
+    };
+
+    const result = await reservationsCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents in 'job-reservations' collection.`);
+};
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const down = async (db, client) => {
+    console.log("Reverting migration: add feedback fields to job-reservations.down");
+
+    const reservationsCollection = db.collection('job-reservations');
+
+    // Для отката просто удаляем добавленные поля из всех документов.
+    const update = {
+        $unset: {
+            employerFeedback: "",
+            employeeFeedback: "",
+        }
+    };
+
+    const result = await reservationsCollection.updateMany({}, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents in 'job-reservations' collection.`);
+};
+
+
+=====================================
+Файл: migrations/20251113155610-add_tgid_to_users.js
+=====================================
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const up = async (db, client) => {
+    console.log("Applying migration: add tgId to users.up");
+
+    const usersCollection = db.collection('users');
+
+    // Ищем только те документы, где поле tgId еще не существует.
+    // Это делает миграцию безопасной для повторного запуска (идемпотентной).
+    const filter = { tgId: { $exists: false } };
+
+    // Устанавливаем новое поле tgId со значением null.
+    const update = { $set: { tgId: null } };
+
+    const result = await usersCollection.updateMany(filter, update);
+
+    console.log(`Updated ${result.modifiedCount} documents.`);
+};
+
+/**
+ * @param db {import('mongodb').Db}
+ * @param client {import('mongodb').MongoClient}
+ * @returns {Promise<void>}
+ */
+export const down = async (db, client) => {
+    console.log("Reverting migration: add tgId to users.down");
+
+    const usersCollection = db.collection('users');
+
+    // Для отката мы просто удаляем поле tgId из всех документов.
+    const update = { $unset: { tgId: "" } };
+
+    // Применяем ко всем документам. Оператор $unset не вызовет ошибки,
+    // если поля в каком-то документе уже отсутствуют.
+    const result = await usersCollection.updateMany({}, update);
+
+    console.log(`Reverted ${result.modifiedCount} documents.`);
+};
+
+
+=====================================
+Файл: nest-cli.json
+=====================================
+
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": ["mail/templates/**/*"],
+    "deleteOutDir": true
+  }
+}
+
+
+
+=====================================
+Файл: package.json
+=====================================
+
+{
+  "name": "clean-nest-template",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch --host",
+    "dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "bots": "cd src/telegram-bots && npm start",
+    "bots:dev": "cd src/telegram-bots && npm run dev",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "migrate:create": "migrate-mongo create",
+    "migrate:up": "migrate-mongo up",
+    "migrate:down": "migrate-mongo down",
+    "migrate:status": "migrate-mongo status"
+  },
+  "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/axios": "^4.0.1",
+    "@nestjs/bullmq": "^11.0.4",
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.2.2",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/mongoose": "^10.0.6",
+    "@nestjs/platform-express": "^10.4.7",
+    "@nestjs/platform-socket.io": "^10.3.10",
+    "@nestjs/serve-static": "^4.0.2",
+    "@nestjs/throttler": "^6.1.1",
+    "@nestjs/websockets": "^10.3.10",
+    "@types/multer": "^1.4.11",
+    "aws-sdk": "^2.1649.0",
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.65.1",
+    "cookie-parser": "^1.4.6",
+    "easy-yandex-s3": "^2.0.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "handlebars": "^4.7.8",
+    "ioredis": "^5.8.2",
+    "mongoose": "^8.4.0",
+    "mongoose-autopopulate": "^1.1.0",
+    "multer": "^1.4.5-lts.1",
+    "nestjs-telegraf": "^2.9.1",
+    "nodemailer": "^6.9.14",
+    "path": "^0.12.7",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.1",
+    "sharp": "^0.33.5",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.0.0",
+    "@nestjs/schematics": "^10.0.0",
+    "@nestjs/testing": "^10.0.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.2",
+    "@types/node": "^20.19.24",
+    "@types/nodemailer": "^6.4.15",
+    "@types/supertest": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jest": "^29.5.0",
+    "migrate-mongo": "^12.1.3",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.0.0",
+    "source-map-support": "^0.5.21",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^9.4.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
+
+
+=====================================
+Файл: src/admin/admin.controller.ts
+=====================================
+
+import { Controller, Post, Body } from '@nestjs/common';
+import { AdminService } from './admin.service';
+
+
+// all about MongoDB
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { UserClass } from 'src/user/schemas/user.schema';
+import ApiError from 'src/exceptions/errors/api-error';
+import { JobReservationClass } from 'src/job-form/schemas/job-reservation.schema';
+
+@Controller('admin')
+export class AdminController {
+  constructor(
+    private readonly adminService: AdminService,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+    @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
+  ) { }
+
+  @Post("employers/not-moderated")
+  async getNotModeratedEmployers(
+  ) {
+    let query = {
+      isModerated: false,
+      roles: "employer"
+    }
+    return await this.UserModel.find(query)
+  }
+
+  @Post("employers/moderate")
+  async moderateEmployer(
+    @Body("userId") userId: string,
+    @Body("value") value: boolean
+  ) {
+    try {
+      if (value == true) {
+        return await this.UserModel.findByIdAndUpdate(userId, { isModerated: true })
+      } else {
+        return await this.UserModel.findByIdAndDelete(userId)
+      }
+    } catch (error) {
+      return error
+    }
+  }
+
+  @Post("employees/find")
+  async findEmployee(
+    @Body("email") email: string
+  ) {
+    try {
+      let candidate = await this.UserModel.findOne({ email, roles: "employee" })
+
+      return candidate
+    } catch (error) {
+      throw ApiError.BadRequest("Ошибка при поиске соискателя")
+    }
+  }
+
+  @Post("job-reservations/get-all")
+  async getAllReservations() {
+    try {
+      return this.JobReservationModel.find({}).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
+    } catch (error) {
+      throw ApiError.BadRequest("Ошибка при поиске")
+    }
+  }
+}
+
+
+=====================================
+Файл: src/admin/admin.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { AdminService } from './admin.service';
+import { AdminController } from './admin.controller';
+import UserModel from 'src/user/models/user.model';
+import JobReservationModel from 'src/job-form/models/job-reservation.model';
+
+@Module({
+  controllers: [AdminController],
+  providers: [AdminService],
+  imports: [UserModel, JobReservationModel]
+})
+export class AdminModule { }
+
+
+=====================================
+Файл: src/admin/admin.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AdminService {}
+
+
+=====================================
+Файл: src/admin/global_admin.guard.ts
+=====================================
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import ApiError from 'src/exceptions/errors/api-error';
+import { RolesService } from 'src/roles/roles.service';
+
+@Injectable()
+export class GlobalAdminGuard implements CanActivate {
+  constructor(
+    private jwtService: JwtService,
+    private RolesService: RolesService
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    
+    const token = this.extractTokenFromHeader(request)
+    if (!token) 
+      throw ApiError.UnauthorizedError()
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_ACCESS_SECRET })
+
+      if (!this.RolesService.isAdmin(payload.role))
+        throw ApiError.AccessDenied()
+
+      request.user = payload
+    } catch {
+      throw ApiError.UnauthorizedError()
+    }
+    return true
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? []
+    return type === 'Bearer' ? token : undefined
+  }
+}
+
+
+=====================================
+Файл: src/admin/some_admin.guard.ts
+=====================================
+
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import ApiError from 'src/exceptions/errors/api-error';
+import { RolesService } from 'src/roles/roles.service';
+
+@Injectable()
+export class SomeAdminGuard implements CanActivate {
+  constructor(
+    private jwtService: JwtService,
+    private RolesService: RolesService
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    
+    const token = this.extractTokenFromHeader(request)
+    if (!token) 
+      throw ApiError.UnauthorizedError()
+
+    try {
+      const payload = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_ACCESS_SECRET })
+//криво
+      if (!(this.RolesService.isAdmin(payload.roles) || (this.RolesService.isManager(payload.roles))))
+        throw ApiError.AccessDenied()
+
+      request.user = payload
+    } catch {
+      throw ApiError.UnauthorizedError()
+    }
+    return true
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? []
+    return type === 'Bearer' ? token : undefined
+  }
+}
+
+
+=====================================
+Файл: src/app-state/app-state.controller.ts
+=====================================
+
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { AppStateService } from './app-state.service';
+
+// all about MongoDB
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { AppStateClass } from './schemas/app-state.schema';
+
+// process.env.APP_STATE_ID
+
+@Controller('app-state')
+export class AppStateController {
+  constructor(private readonly appStateService: AppStateService,
+    @InjectModel('AppState') private AppStateModel: Model<AppStateClass>,
+  ) {}
+
+  @Get()
+  getAppState() {
+    return this.AppStateModel.findOne({})
+  }
+
+  @Get('get-food-categories')
+  getAllCategories() {
+    return this.appStateService.getAllCategories();
+  }
+
+  @Post('create-food-category')
+  async createFoodCategory(@Body('category') category: string[]) {
+    return this.appStateService.createFoodCategory(category);
+  }
+  @Get('delete-food-category')
+  async deleteFoodCategory(@Query('category') category: String) {
+    return this.appStateService.deleteFoodCategory(category);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.appStateService.remove(+id);
+  }
+}
+
+
+=====================================
+Файл: src/app-state/app-state.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { AppStateService } from './app-state.service';
+import { AppStateController } from './app-state.controller';
+import AppStateModel from './models/app-state.model';
+
+@Module({
+  controllers: [AppStateController],
+  providers: [AppStateService],
+  imports: [
+    AppStateModel
+  ],
+})
+export class AppStateModule {}
+
+
+=====================================
+Файл: src/app-state/app-state.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { AppStateClass } from './schemas/app-state.schema';
+
+@Injectable()
+export class AppStateService {
+  constructor(
+    @InjectModel('AppState') private AppStateModel: Model<AppStateClass>,
+  ) {}
+
+  async createFoodCategory(category) {
+    return await this.AppStateModel.updateOne(
+      {},
+      { $addToSet: { foodCategory: { $each: category } } },
+      { upsert: true }, // Создает документ, если его еще нет
+    ).sort();
+  }
+  async deleteFoodCategory(category) {
+    await this.AppStateModel.updateOne(
+      {},
+      { $pull: { foodCategory: category } },
+    );
+  }
+  getAllCategories() {
+    return this.AppStateModel.findOne({}, { foodCategory: 1 });
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} appState`;
+  }
+
+  update(id: number) {
+    return `This action updates a #${id} appState`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} appState`;
+  }
+}
+
+
+=====================================
+Файл: src/app-state/interfaces/app-state.interface.ts
+=====================================
+
+import mongoose from "mongoose"
+
+export interface AppState {
+  _id: mongoose.Types.ObjectId
+  foodCategory: string[]
+  
+}
+
+
+=====================================
+Файл: src/app-state/models/app-state.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { AppStateSchema } from "../schemas/app-state.schema";
+
+let AppStateModel = MongooseModule.forFeature([{ name: 'AppState', schema: AppStateSchema, collection: 'appstate' }])
+export default AppStateModel
+
+
+=====================================
+Файл: src/app-state/schemas/app-state.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+
+export type AppStateDocument = HydratedDocument<AppStateClass>
+
+@Schema()
+export class AppStateClass {
+  @Prop({
+    type: [String],
+  })
+  foodCategory: string[]
+}
+
+export const AppStateSchema = SchemaFactory.createForClass(AppStateClass)
+
+
+=====================================
+Файл: src/app.controller.ts
+=====================================
+
+import { Controller, Get } from '@nestjs/common';
+import { AppService } from './app.service';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+
+@Controller()
+export class AppController {
+  constructor(
+    private readonly appService: AppService,
+    @InjectConnection() private connection: Connection
+  ) {
+  }
+  @Get()
+  getHello(): string {
+    return this.appService.getHello()
+  }
+}
+
+
+=====================================
+Файл: src/app.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { TokenModule } from './token/token.module';
+import { UserModule } from './user/user.module';
+import { RolesModule } from './roles/roles.module';
+import { S3Module } from './s3/s3.module';
+import { AppStateModule } from './app-state/app-state.module';
+import { MailModule } from './mail/mail.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { VideoModule } from './video/video.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { JobFormModule } from './job-form/job-form.module';
+import { AdminModule } from './admin/admin.module';
+import { TPaymentsModule } from './t-payments/t-payments.module';
+import { ThrottlerAutoModule } from './common/throttler-auto.module';
+import { JobFormFillRequestModule } from './job-form-fill-request/job-form-fill-request.module';
+import { InvitesModule } from './invites/invites.module';
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+      serveRoot: '/static/',
+    }),
+    ThrottlerModule.forRoot([{
+      ttl: 1000,
+      limit: 6,
+      blockDuration: 10 * 60000,
+    }]),
+    ThrottlerAutoModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGO_URL, {
+      connectionFactory: (connection) => {
+        connection.plugin(require('mongoose-autopopulate'));
+        return connection;
+      },
+    }),
+    AuthModule,
+    TokenModule,
+    UserModule,
+    RolesModule,
+    S3Module,
+    AppStateModule,
+    MailModule,
+    VideoModule,
+    JobFormModule,
+    AdminModule,
+    TPaymentsModule,
+    JobFormFillRequestModule,
+    InvitesModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: ThrottlerGuard,
+  }],
+})
+export class AppModule { }
+
+
+=====================================
+Файл: src/app.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class AppService {
+  getHello(): string {
+    return 'Hello!'
+  }
+}
+
+
+=====================================
+Файл: src/auth/admin.guard.ts
+=====================================
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import * as cookie from 'cookie';
+import ApiError from 'src/exceptions/errors/api-error';
+
+import { TokenService } from 'src/token/token.service';
+// mongodb
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { UserClass } from 'src/user/schemas/user.schema';
+
+@Injectable()
+export class AdminAuthGuard implements CanActivate {
+  constructor(
+    private readonly tokenService: TokenService,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+  ) { }
+
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const cookies = cookie.parse(request.headers.cookie || '');
+    const accessToken = cookies.token;
+    if (!accessToken) {
+      throw ApiError.AccessDenied()
+    }
+
+    // с помощью access token'а получаем _id пользователя 
+    let userData = this.tokenService.validateAccessToken(accessToken);
+    if (userData._id) {
+      let user = await this.UserModel.findById(userData._id)
+
+      // если роль нашлась, то пускаем пользователя
+      if (user.roles.indexOf('manager') != -1) return true
+    }
+    throw ApiError.AccessDenied()
+  }
+}
+
+
+=====================================
+Файл: src/auth/auth.controller.ts
+=====================================
+
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards, UploadedFiles, UseInterceptors, Query } from '@nestjs/common'
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { Request, Response } from 'express';
+import RequestWithUser from 'src/types/request-with-user.type';
+import { UserFromClient } from 'src/user/interfaces/user-from-client.interface';
+import { User } from 'src/user/interfaces/user.interface';
+import { AuthGuard } from './auth.guard';
+import { AuthService } from './auth.service';
+import { MailService } from 'src/mail/mail.service';
+import { Throttle } from '@nestjs/throttler';
+
+import YaCloud from 'src/s3/bucket';
+import * as sharp from "sharp";
+
+// all about MongoDB
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { Model, Types } from 'mongoose';
+import { UserClass } from 'src/user/schemas/user.schema';
+import { JobFormClass } from 'src/job-form/schemas/job-form.schema';
+import { InvitesService } from 'src/invites/invites.service';
+@Controller('auth')
+export class AuthController {
+	constructor(
+		private AuthService: AuthService,
+		private mailService: MailService,
+		private invitesService: InvitesService,
+		@InjectModel('User') private UserModel: Model<UserClass>,
+		@InjectModel("JobForm") private JobFormModel: Model<JobFormClass>
+	) { }
+
+	// @Get("/test")
+	// async test() {
+	// 	console.log(
+	// 		await this.mailService.sendUserConfirmation({
+	// 			"name": "Григорий Дзюин",
+	// 			"email": "glebegorov390@gmail.com",
+	// 		})
+	// 	);
+	// 	return 'ok'
+	// }
+
+	@Throttle({
+		default: {
+			ttl: 60000,
+			limit: 4,
+			blockDuration: 5 * 60000
+		}
+	})
+	@HttpCode(HttpStatus.CREATED)
+	@Post('registration')
+	async registration(
+		@Res({ passthrough: true }) res: Response,
+		@Body() user: User
+	) {
+		const userData = await this.AuthService.registration(user)
+
+		await this.JobFormModel.updateMany(
+			{ email: userData.user.email, employeeId: null },
+			{ $set: { employeeId: new Types.ObjectId(userData.user._id) } }
+		);
+
+		if (process.env.NODE_ENV === 'production')
+			this.mailService.sendUserConfirmation(user);
+
+		let refreshToken = userData.refreshToken
+		delete userData.refreshToken
+
+		if (String(user.roles[0]) == "manager" && user?.inviteToken)
+			await this.invitesService.consume(user.inviteToken, userData.user._id);
+
+		res.cookie(
+			'refreshToken',
+			refreshToken,
+			{
+				maxAge: 30 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).cookie(
+			'token',
+			userData.accessToken,
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).cookie(
+			'roles',
+			JSON.stringify(userData.user.roles),
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		)
+			.json(userData)
+	}
+
+	@Throttle({
+		default: {
+			ttl: 60000,
+			limit: 5,
+			blockDuration: 5 * 60000
+		}
+	})
+	@HttpCode(HttpStatus.OK)
+	@Post('login')
+	async login(
+		@Res({ passthrough: true }) res: Response,
+		@Body('email') email: string,
+		@Body('password') password: string
+	) {
+		const userData = await this.AuthService.login(email, password)
+
+		let refreshToken = userData.refreshToken
+		delete userData.refreshToken
+
+		res.cookie(
+			'refreshToken',
+			refreshToken,
+			{
+				maxAge: 30 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).cookie(
+			'token',
+			userData.accessToken,
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).cookie(
+			'roles',
+			JSON.stringify(userData.user.roles),
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		)
+			.json(userData)
+	}
+
+	@HttpCode(HttpStatus.OK)
+	@Get('refresh')
+	async refresh(
+		@Req() req: Request,
+		@Res() res: Response,
+	) {
+		const { refreshToken, token } = req.cookies
+
+		// проверить, валиден ещё accessToken
+		// если accessToken не валиден - сделать новый с помощью refreshToken
+		const userData = await this.AuthService.refresh(refreshToken, token)
+		// console.log(JSON.stringify(userData.user.roles));
+
+		res.cookie(
+			'refreshToken',
+			refreshToken,
+			{
+				maxAge: 30 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		)
+		res.cookie(
+			'token',
+			userData.accessToken,
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		)
+		res.json(userData.user)
+	}
+
+	@HttpCode(HttpStatus.OK)
+	@Post('logout')
+	async logout(
+		@Req() req: Request,
+		@Res() res: Response,
+	) {
+		const { refreshToken } = req.cookies
+
+		await this.AuthService.logout(refreshToken)
+		res.clearCookie('refreshToken').clearCookie('token').send()
+	}
+
+	@Throttle({
+		default: {
+			ttl: 60000,
+			limit: 4,
+			blockDuration: 5 * 60000
+		}
+	})
+	@Post('reset-password')
+	async resetPassword(
+		@Res() res: Response,
+		@Body('password') password: string,
+		@Body('token') token: string,
+		@Body('userId') userId: string
+	) {
+		const userData = await this.AuthService.resetPassword(password, token, userId)
+
+		let refreshToken = userData.refreshToken
+		delete userData.refreshToken
+
+		res.cookie(
+			'refreshToken',
+			refreshToken,
+			{
+				maxAge: 30 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).cookie(
+			'token',
+			userData.accessToken,
+			{
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+				httpOnly: !eval(process.env.HTTPS),
+				secure: eval(process.env.HTTPS),
+				domain: process.env?.DOMAIN ?? ''
+			}
+		).json(userData)
+	}
+
+	@UseGuards(AuthGuard)
+	@HttpCode(HttpStatus.OK)
+	@Post('update')
+	async update(
+		@Body('user') newUser: UserFromClient,
+		@Body('userId') userId: string
+	) {
+		return await this.AuthService.update(newUser, userId)
+	}
+
+	@HttpCode(HttpStatus.OK)
+	@Post('send-reset-link')
+	async sendResetLink(
+		@Body('email') email: string
+	) {
+		let link = await this.AuthService.sendResetLink(email)
+		return link
+	}
+
+	@Post('upload-avatar')
+	@UseInterceptors(AnyFilesInterceptor())
+	async uploadAvatar(
+		@UploadedFiles() files: Array<Express.Multer.File>,
+		@Query('user_id') userId: String,
+	) {
+		let filenames = [];
+
+		for (let file of files) {
+			if (file.originalname.startsWith('avatar')) {
+				file.buffer = await sharp(file.buffer).resize(300, 300).toBuffer()
+			}
+			let uploadResult = await YaCloud.Upload({
+				file,
+				path: 'avatars',
+				fileName: file.originalname,
+			});
+			filenames.push(uploadResult.Location);
+		}
+
+		if (filenames.length == 0) return
+
+		return await this.UserModel.findByIdAndUpdate(userId, { $set: { avatars: [filenames[0]] } });
+	}
+
+	@Throttle({
+		default: {
+			ttl: 60000,
+			limit: 4,
+			blockDuration: 5 * 60000
+		}
+	})
+	@HttpCode(HttpStatus.OK)
+	@Post("validate-manager-invite-token")
+	async validateManagerInviteToken(
+		@Body("inviteToken") inviteToken: string
+	) {
+		return false;
+	}
+}
+
+
+=====================================
+Файл: src/auth/auth.guard.ts
+=====================================
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import ApiError from 'src/exceptions/errors/api-error';
+import { TokenService } from 'src/token/token.service';
+import * as cookie from 'cookie';
+
+// mongodb
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { UserClass } from 'src/user/schemas/user.schema';
+
+@Injectable()
+export class AuthGuard implements CanActivate {
+  constructor(
+    private readonly tokenService: TokenService,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+  ) { }
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    const cookies = cookie.parse(request.headers.cookie || '');
+    const accessToken = cookies.token;
+
+    if (!accessToken) throw ApiError.UnauthorizedError()
+    let userData = this.tokenService.validateAccessToken(accessToken);
+
+    if (userData?._id) {
+      return true
+    }
+    throw ApiError.UnauthorizedError();
+  }
+}
+
+
+=====================================
+Файл: src/auth/auth.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
+import { TokenModule } from 'src/token/token.module';
+
+import { JwtModule } from '@nestjs/jwt';
+import { RolesService } from 'src/roles/roles.service';
+import { MailService } from 'src/mail/mail.service';
+
+// mongodb
+import UserModel from 'src/user/models/user.model';
+import JobFormModel from 'src/job-form/models/job-form.model';
+import { InvitesService } from 'src/invites/invites.service';
+import InviteModel from 'src/invites/models/invite.model';
+
+@Module({
+  imports: [
+    TokenModule,
+    JwtModule,
+    UserModel,
+    JobFormModel,
+    InviteModel
+  ],
+  controllers: [AuthController],
+  providers: [AuthService, RolesService, MailService, InvitesService]
+})
+export class AuthModule { }
+
+
+=====================================
+Файл: src/auth/auth.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common'
+import { TokenService } from 'src/token/token.service'
+import { Model } from 'mongoose'
+import ApiError from 'src/exceptions/errors/api-error'
+import { InjectModel } from '@nestjs/mongoose'
+import { UserClass } from 'src/user/schemas/user.schema'
+import { User } from 'src/user/interfaces/user.interface'
+import { UserFromClient } from 'src/user/interfaces/user-from-client.interface'
+import { RolesService } from 'src/roles/roles.service'
+import * as bcrypt from 'bcryptjs'
+import { MailService } from 'src/mail/mail.service'
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @InjectModel('User') private UserModel: Model<UserClass>,
+    private TokenService: TokenService,
+    private RolesService: RolesService,
+    private mailService: MailService,
+  ) { }
+
+  async registration(user: User | UserFromClient) {
+    const candidate = await this.UserModel.findOne({ email: user.email })
+
+    if (candidate)
+      throw ApiError.BadRequest(`Пользователь с почтой ${user.email} уже существует`)
+
+    if (user.password.length < 8)
+      throw ApiError.BadRequest('Слишком короткий пароль')
+
+    const password = await bcrypt.hash(user.password, 3)
+    const created_user = (await this.UserModel.create(Object.assign(user, { password }))).toObject()
+
+    const tokens = this.TokenService.generateTokens({ _id: created_user._id, password: created_user.password })
+    await this.TokenService.saveToken(tokens.refreshToken)
+
+    return {
+      ...tokens,
+      user: created_user
+    }
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.UserModel.findOne({ email })
+
+    if (!user) {
+      throw ApiError.BadRequest('Пользователь с таким email не найден')
+    }
+
+    if (user.password.length < 8)
+      throw ApiError.BadRequest('Слишком короткий пароль')
+
+    const isPassEquals = await bcrypt.compare(password, user.password)
+
+    if (!isPassEquals) {
+      throw ApiError.BadRequest('Неверный пароль')
+    }
+
+    const tokens = this.TokenService.generateTokens({ _id: user._id, password: user.password })
+    await this.TokenService.saveToken(tokens.refreshToken)
+
+    return {
+      ...tokens,
+      user
+    }
+  }
+
+  async refresh(refreshToken: string, accessToken: string) {
+    let userData: any; // jwt payload
+    let user: any; // object to return
+
+    // проверить, валиден ли ещё accessToken
+    userData = this.TokenService.validateAccessToken(accessToken)
+
+    if (userData != null) {
+      user = await this.UserModel.findById(userData._id)
+
+      return {
+        refreshToken: refreshToken,
+        accessToken: accessToken,
+        user: user
+      }
+    }
+    // если accessToken не валиден - пройти авторизацию с refreshToken и создать новый accessToken
+
+    // если нет refreshToken выкидываем пользователя
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError()
+    }
+
+    userData = this.TokenService.validateRefreshToken(refreshToken)
+    const tokenFromDb = await this.TokenService.findToken(refreshToken)
+    // если refreshToken сдох, то выкидываем пользователя
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError()
+    }
+
+    user = await this.UserModel.findById(userData._id)
+
+    if (userData.password !== user.password) {
+      throw ApiError.AccessDenied('Аутентификация провалена. Пароль изменен')
+    }
+    // new accessToken, чтобы пользователь мог зайти в
+    // систему ближайшие 15 минут без использоватния refreshToken
+    const newAccessToken = this.TokenService.generateAccessToken({ _id: user._id, password: user.password })
+
+    return {
+      refreshToken: refreshToken,
+      accessToken: newAccessToken,
+      user: user
+    }
+  }
+
+  async validateEnterToResetPassword(user_id: any, token: string) {
+    let candidate = await this.UserModel.findById(user_id)
+
+    if (!candidate._id) throw ApiError.BadRequest('Пользователь с таким _id не найден')
+
+    let secret = process.env.JWT_RESET_SECRET + candidate.password
+
+    let result = this.TokenService.validateResetToken(token, secret)
+
+    if (!result) throw ApiError.AccessDenied()
+
+    return result
+  }
+
+  async resetPassword(password: string, token: string, userId: string) {
+    try {
+      await this.validateEnterToResetPassword(userId, token)
+
+      const hashPassword = await bcrypt.hash(password, 3)
+      const user = await this.UserModel.findByIdAndUpdate(userId, { password: hashPassword })
+
+      const tokens = this.TokenService.generateTokens({ _id: user._id, password: user.password })
+      await this.TokenService.saveToken(tokens.refreshToken)
+
+      return {
+        ...tokens,
+        user: user
+      }
+    } catch (error) {
+      return null
+    }
+  }
+
+  async sendResetLink(email: string) {
+    let candidate = await this.UserModel.findOne({ email })
+    if (!candidate)
+      throw ApiError.BadRequest('Пользователь с таким email не найден')
+
+    const secret = process.env.JWT_RESET_SECRET + candidate.password
+    const token = this.TokenService.createResetToken({ _id: candidate._id, password: candidate.password }, secret)
+
+    const link = process.env.CLIENT_URL + `/forgot-password?user_id=${candidate._id}&token=${token}`
+
+    await this.mailService.sendResetLink(link, email)
+
+    return link
+  }
+
+  async logout(refreshToken: string) {
+    return await this.TokenService.removeToken(refreshToken)
+  }
+
+  async update(newUser: UserFromClient, userId: string) {
+    return await this.UserModel.findByIdAndUpdate(userId, newUser, {
+      new: true,
+      runValidators: true
+    })
+  }
+
+  async getAllUsers() {
+    return await this.UserModel.find({}).populate('myCourses')
+  }
+}
+
+
+=====================================
+Файл: src/auth/teacher.guard.ts
+=====================================
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import * as cookie from 'cookie';
+
+import { TokenService } from 'src/token/token.service';
+// mongodb
+import { InjectModel } from '@nestjs/mongoose'
+import { Model } from 'mongoose'
+import { UserClass } from 'src/user/schemas/user.schema';
+
+import ApiError from 'src/exceptions/errors/api-error';
+
+@Injectable()
+export class TeacherAuthGuard implements CanActivate {
+  constructor(
+    private readonly tokenService: TokenService,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+  ) { }
+
+  async canActivate(
+    context: ExecutionContext,
+  ): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
+    const cookies = cookie.parse(request.headers.cookie || '');
+    const accessToken = cookies.token;
+    if (!accessToken) {
+      throw ApiError.AccessDenied()
+    }
+
+    // с помощью access token'а получаем _id пользователя 
+    let userData = this.tokenService.validateAccessToken(accessToken);    
+    if (userData._id) {
+      let user = await this.UserModel.findById(userData._id)      
+      // если роль нашлась, то пускаем пользователя
+      if (user.roles.indexOf('teacher') != -1) return true
+    }
+    throw ApiError.AccessDenied()
+  }
+}
+
+
+=====================================
+Файл: src/auth/try-to-get-user.guard.ts
+=====================================
+
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+
+@Injectable()
+export class TryToGetUser implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest()
+    
+    const token = this.extractTokenFromHeader(request)
+    
+    try {
+      const payload = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_ACCESS_SECRET })
+
+      request.user = payload
+    } catch {}
+
+    return true
+  }
+
+  private extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = request.headers.authorization?.split(' ') ?? []
+    return type === 'Bearer' ? token : undefined
+  }
+}
+
+
+=====================================
+Файл: src/common/guards/throttler-auto.guard.ts
+=====================================
+
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ThrottlerGuard } from '@nestjs/throttler';
+
+/**
+ * Автоматически применяет ThrottlerGuard только к HTTP-запросам.
+ * Не затрагивает WebSocket, Microservices, Telegram и т.д.
+ */
+@Injectable()
+export class ThrottlerAutoGuard extends ThrottlerGuard implements CanActivate {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Применяем только к HTTP
+    if (context.getType() !== 'http') {
+      return true; // пропускаем не-HTTP
+    }
+    return super.canActivate(context);
+  }
+}
+
+
+=====================================
+Файл: src/common/throttler-auto.module.ts
+=====================================
+
+import { Module, OnModuleInit, Injectable } from '@nestjs/common';
+import { DiscoveryModule, DiscoveryService, MetadataScanner } from '@nestjs/core';
+import { Controller } from '@nestjs/common/interfaces';
+import { ThrottlerAutoGuard } from './guards/throttler-auto.guard';
+
+@Injectable()
+export class ThrottlerAutoRegistrar implements OnModuleInit {
+  constructor(
+    private readonly discoveryService: DiscoveryService,
+    private readonly metadataScanner: MetadataScanner,
+  ) { }
+
+  onModuleInit() {
+    const controllers = this.discoveryService.getControllers();
+
+    for (const { instance, metatype } of controllers) {
+      // Пропускаем, если это не настоящий контроллер (например, Telegraf-апдейты)
+      if (!metatype || !instance) continue;
+
+      // Проверяем, что это HTTP-контроллер (а не, например, Update из telegraf)
+      const isHttpController = Reflect.hasMetadata('path', metatype);
+
+      if (isHttpController) {
+        // Получаем текущие guards
+        const existingGuards = Reflect.getMetadata('__guards__', metatype) || [];
+        // Добавляем ThrottlerAutoGuard, если его ещё нет
+        if (!existingGuards.some(g => g.prototype instanceof ThrottlerAutoGuard)) {
+          Reflect.defineMetadata('__guards__', [...existingGuards, ThrottlerAutoGuard], metatype);
+        }
+      }
+    }
+  }
+}
+
+@Module({
+  imports: [DiscoveryModule],
+  providers: [ThrottlerAutoGuard, ThrottlerAutoRegistrar],
+  exports: [ThrottlerAutoGuard],
+})
+export class ThrottlerAutoModule { }
+
+
+=====================================
+Файл: src/exceptions/errors/api-error.ts
+=====================================
+
+import { HttpException, HttpStatus } from "@nestjs/common"
+
+export default class ApiError extends HttpException {
+	error_code: number
+	errors: any[]
+
+	constructor(status: number, message: string, errors = []) {
+		super(message, status)
+		this.error_code = status
+		this.errors = errors
+	}
+
+	static UnauthorizedError(message: string | null = null) {
+		return new ApiError(401, message ?? 'Вы не авторизованы')
+	}
+
+	static BadRequest(message: string, code = 400, errors = []) {
+		return new ApiError(code, message, errors)
+	}
+
+	static AccessDenied(message: string | null = null) {
+		return new ApiError(HttpStatus.NOT_ACCEPTABLE, message ?? 'Отказано в доступе')
+	}
+
+	static NotFound(message: string | null = null) {
+		return new ApiError(HttpStatus.NOT_FOUND, message ?? 'Не найдено')
+	}
+}
+
+
+=====================================
+Файл: src/exceptions/http-exception.filter.ts
+=====================================
+
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { Response } from 'express';
+import ApiError from 'src/exceptions/errors/api-error';
+
+@Catch(HttpException)
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp()
+    const res = ctx.getResponse<Response>()
+
+    // if (dev)
+    // console.log(exception)
+
+    if (exception.getStatus() === 500)
+      return res.status(500).json({ message: 'Непредвиденная ошибка' })
+
+    if (exception.getStatus() === 429) {
+      return res.status(429).json({ message: 'Слишком много запросов. Вы заблокированы на 5 минут!' })
+    }
+   
+    if (exception instanceof ApiError)
+      return res.status(exception.error_code).json({ message: exception.message })
+  }
+}
+
+
+=====================================
+Файл: src/invites/interfaces/invite.interface.ts
+=====================================
+
+import { Types } from 'mongoose';
+
+export enum InviteStatus {
+  PENDING = 'pending',
+  ACCEPTED = 'accepted',
+  EXPIRED = 'expired',
+}
+
+export interface Invite {
+  email: string;
+  token: string;
+  status: InviteStatus;
+  expiresAt: Date;
+  role: string;
+  acceptedBy: Types.ObjectId | null;
+}
+
+// Интерфейс для данных, приходящих от администратора
+export interface CreateInvitePayload {
+  email: string;
+  role: string;
+}
+
+
+=====================================
+Файл: src/invites/invites.controller.ts
+=====================================
+
+import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
+import { InvitesService } from './invites.service';
+import { CreateInvitePayload } from './interfaces/invite.interface'; // Импортируем наш интерфейс
+import { AdminAuthGuard } from 'src/auth/admin.guard';
+
+@Controller('invites')
+export class InvitesController {
+  constructor(private readonly invitesService: InvitesService) { }
+
+  // Эндпоинт для администратора для создания инвайта
+  @UseGuards(AdminAuthGuard)
+  @Post("create")
+  async create(@Body() payload: CreateInvitePayload) { // Используем интерфейс для типизации тела запроса
+    const { email, role } = payload;
+    await this.invitesService.create(email, role);
+    return { message: 'Приглашение успешно отправлено.' };
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Get("get-all")
+  async getAllInvites() {
+    return await this.invitesService.getInvites();
+  }
+
+  // Публичный эндпоинт для фронтенда для проверки токена
+  @Post('validate-invite-token')
+  async validate(
+    @Body('inviteToken') token: string
+  ) {
+    const invite = await this.invitesService.validate(token);
+    // Возвращаем только email, чтобы фронтенд мог предзаполнить поле
+    return { email: invite.email };
+  }
+}
+
+
+=====================================
+Файл: src/invites/invites.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { InvitesController } from './invites.controller';
+import { InvitesService } from './invites.service';
+import InviteModel from './models/invite.model';
+import TokenModel from "../token/models/token.model"
+import UserModel from 'src/user/models/user.model';
+import { TokenService } from 'src/token/token.service';
+
+@Module({
+  imports: [
+    InviteModel, TokenModel, UserModel
+  ],
+  controllers: [InvitesController],
+  providers: [InvitesService, TokenService],
+  exports: [InvitesService],
+})
+export class InvitesModule { }
+
+
+=====================================
+Файл: src/invites/invites.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { Invite, InviteDocument } from './schemas/invite.schema';
+import { InviteStatus } from './interfaces/invite.interface';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
+import ApiError from 'src/exceptions/errors/api-error';
+
+@Injectable()
+export class InvitesService {
+  constructor(
+    @InjectModel(Invite.name) private inviteModel: Model<InviteDocument>,
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+  ) { }
+
+  async create(email: string, role: string): Promise<Invite> {
+    const existingInvite = await this.inviteModel.findOne({ email, status: InviteStatus.PENDING });
+    if (existingInvite) {
+      throw ApiError.BadRequest("Активное приглашение для этого email уже существует.")
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    const newInvite = new this.inviteModel({ email, token, expiresAt, role });
+
+    // const registrationUrl = `${this.configService.get('FRONTEND_URL')}/registration/manager?invite_token=${token}`;
+
+    // await this.mailerService.sendMail({
+    //   to: email,
+    //   subject: 'Приглашение для регистрации',
+    //   template: './invitation',
+    //   context: { url: registrationUrl },
+    // });
+
+    return newInvite.save();
+  }
+
+  async getInvites(): Promise<Invite[]> {
+    return this.inviteModel.find({})
+  }
+
+  async validate(token: string): Promise<Invite> {
+    const invite = await this.inviteModel.findOne({ token });
+
+    if (!invite || invite.status !== InviteStatus.PENDING) {
+      throw ApiError.NotFound('Приглашение не найдено или уже было использовано.');
+    }
+
+    if (invite.expiresAt < new Date()) {
+      invite.status = InviteStatus.EXPIRED;
+      await invite.save();
+      throw ApiError.BadRequest('Срок действия приглашения истек.');
+    }
+
+    return invite;
+  }
+
+  async consume(token: string, userId: Types.ObjectId): Promise<void> {
+    await this.inviteModel.updateOne(
+      { token },
+      { $set: { status: InviteStatus.ACCEPTED, acceptedBy: userId } },
+    );
+  }
+}
+
+
+=====================================
+Файл: src/invites/models/invite.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { InviteSchema } from "../schemas/invite.schema";
+
+let InviteModel = MongooseModule.forFeature([{ name: 'Invite', schema: InviteSchema, collection: 'invites' }])
+export default InviteModel
+
+
+=====================================
+Файл: src/invites/schemas/invite.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+import { Invite as IInvite, InviteStatus } from '../interfaces/invite.interface';
+
+export type InviteDocument = HydratedDocument<Invite>;
+
+@Schema({ timestamps: true })
+export class Invite implements IInvite {
+  @Prop({ type: String, required: true, unique: true, index: true })
+  email: string;
+
+  @Prop({ type: String, required: true, unique: true, index: true })
+  token: string;
+
+  @Prop({ type: String, enum: InviteStatus, default: InviteStatus.PENDING })
+  status: InviteStatus;
+
+  @Prop({ type: Date, required: true })
+  expiresAt: Date;
+
+  @Prop({ type: String, required: true, default: 'manager' })
+  role: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null })
+  acceptedBy: Types.ObjectId | null;
+}
+
+export const InviteSchema = SchemaFactory.createForClass(Invite);
+
+
+=====================================
+Файл: src/job-form/interfaces/job-form.interface.ts
+=====================================
+
+export interface JobForm_client {
+  video: {
+    src: string
+  }
+
+  job: string
+  fullName: string
+  coverLetter: string
+  phone: string
+  telegram: string
+  email: string
+  employeeId: string | null,
+  salaryFrom: number | null,
+  salaryTo: number | null,
+  experience: string,
+  workFormat: string,
+
+  // for upload
+  tmpId: number
+  startDate: Date
+}
+
+
+=====================================
+Файл: src/job-form/job-form.controller.ts
+=====================================
+
+import { Controller, Post, Body } from '@nestjs/common';
+import { JobFormService } from './job-form.service';
+import { MailService } from 'src/mail/mail.service';
+
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { JobFormClass } from './schemas/job-form.schema';
+import { JobForm_client } from './interfaces/job-form.interface';
+import { JobReservationClass } from './schemas/job-reservation.schema';
+import ApiError from 'src/exceptions/errors/api-error';
+import { Throttle } from '@nestjs/throttler';
+
+import { Types } from "mongoose"
+import { UserClass } from 'src/user/schemas/user.schema';
+
+
+const RESERVATION_DURATION = 30 * 60 * 1000
+
+@Controller('job-form')
+export class JobFormController {
+  constructor(
+    private readonly jobFormService: JobFormService,
+    private readonly mailService: MailService,
+    @InjectModel('JobForm') private JobFormModel: Model<JobFormClass>,
+    @InjectModel('JobReservation') private JobReservationModel: Model<JobReservationClass>,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+    private readonly httpService: HttpService,
+  ) { }
+
+  async sendJobFormNotification(tgId: number) {
+    try {
+      const buttons = [
+        [
+          {
+            text: '📹 Посмотреть отклик',
+            url: new URL("employee/job-forms", process.env.CLIENT_URL),
+          },
+        ],
+      ]
+
+      const message = "*Работодатель забронировал вашу анкету!*\n\nОжидайте звонка или сообщения"
+
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            reply_markup: { inline_keyboard: buttons },
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
+    } catch (error) {
+    }
+  }
+  @Post("create")
+  async createJobForm(
+    @Body("jobForm") jobForm: JobForm_client
+  ) {
+    let toSave = {
+      job: jobForm?.job,
+      fullName: jobForm?.fullName,
+      coverLetter: jobForm?.coverLetter,
+      video: jobForm?.video,
+      phone: jobForm.phone,
+      telegram: jobForm.telegram,
+      email: jobForm.email,
+      employeeId: null,
+      salaryFrom: jobForm?.salaryFrom ?? null,
+      salaryTo: jobForm?.salaryTo ?? null,
+      experience: jobForm.experience,
+      workFormat: jobForm.workFormat,
+    }
+
+    if (jobForm.employeeId != null) {
+      toSave.employeeId = new Types.ObjectId(jobForm.employeeId)
+    }
+
+    let jobFormFromDb = await this.JobFormModel.create(toSave)
+
+    if (jobForm?.employeeId == null) {
+      await this.mailService.sendJobFormCreatedNotification(jobFormFromDb.email, jobFormFromDb.fullName)
+    }
+    return jobFormFromDb
+  }
+
+  @Post('admin/get-all')
+  async getOrganizationJobs() {
+    return await this.JobFormModel.find({})
+  }
+
+  @Post('get-by-id')
+  async getById(
+    @Body("jobId") jobId: string
+  ) {
+    return await this.JobFormModel.findById(jobId)
+  }
+
+  @Post("get-all")
+  async getAll(
+    @Body("selectedJob") selectedJob: string | null,
+    @Body("selectedExperience") selectedExperience: string | null,
+    @Body("selectedWorkFormat") selectedWorkFormat: string | null,
+    @Body("salaryFrom") salaryFrom: number | null,
+    @Body("salaryTo") salaryTo: number | null
+  ) {
+    const reservationDeadline = new Date();
+    reservationDeadline.setMinutes(reservationDeadline.getMinutes() - 30);
+
+    const raiseDeadline = new Date();
+    raiseDeadline.setDate(raiseDeadline.getDate() - 2);
+
+    let query: any = {
+      $and: [
+        { isApproved: true },
+        {
+          $or: [
+            {
+              lastReservationDate: { $lt: reservationDeadline }
+            },
+            { lastReservationDate: { $exists: false } },
+          ],
+        },
+        {
+          $or: [
+            { lastRaiseDate: { $gt: raiseDeadline } },
+            { lastRaiseDate: { $exists: false } },
+          ],
+        }
+      ]
+    }
+
+    if (selectedJob) {
+      query.$and.push({ job: selectedJob });
+    }
+
+    if (selectedExperience) {
+      query.$and.push({ experience: selectedExperience });
+    }
+
+    if (selectedWorkFormat) {
+      query.$and.push({ workFormat: selectedWorkFormat });
+    }
+
+    const salaryOverlapConditions = [];
+
+    if (salaryFrom) {
+      // Работодатель ищет от X. Нам подходят кандидаты, у которых:
+      // - Верхняя граница (salaryTo) больше X
+      // - ИЛИ верхняя граница не указана (значит, "до бесконечности")
+      salaryOverlapConditions.push({
+        $or: [
+          { salaryTo: { $gte: salaryFrom } },
+          { salaryTo: null }
+        ]
+      });
+    }
+
+    if (salaryTo) {
+      // Работодатель ищет до Y. Нам подходят кандидаты, у которых:
+      // - Нижняя граница (salaryFrom) меньше Y
+      // - ИЛИ нижняя граница не указана (значит, "от 0")
+      salaryOverlapConditions.push({
+        $or: [
+          { salaryFrom: { $lte: salaryTo } },
+          { salaryFrom: null }
+        ]
+      });
+    }
+
+    // Если работодатель указал хотя бы одну границу зарплаты,
+    // мы добавляем сложное условие в основной запрос.
+    if (salaryOverlapConditions.length > 0) {
+      query.$and.push({
+        $or: [
+          // 1. Включаем всех, кто ВООБЩЕ не указал зарплату (позитивный поиск)
+          { salaryFrom: null, salaryTo: null },
+          // 2. ИЛИ тех, чей диапазон пересекается с поиском
+          { $and: salaryOverlapConditions }
+        ]
+      });
+    }
+
+    let res = await this.JobFormModel.find(query).sort({ lastRaiseDate: -1 })
+
+    return res
+  }
+
+  @Post("reserve")
+  async reserveJob(
+    @Body("jobFormId") jobFormId: string,
+    @Body("startDate") startDate: string,
+    @Body("employerId") employerId: string,
+    @Body("employeeId") employeeId: string,
+  ) {
+    let jobForm = await this.JobFormModel.findById(jobFormId)
+    if (!jobForm) throw ApiError.NotFound(`Анкета не найдена`)
+
+    // если у пользователя уже есть забронированная анкета
+    let userReservations = await this.JobReservationModel.find({ employerId })
+    for (let r of userReservations) {
+      const currentTime = new Date().getTime()
+      if (currentTime - r.startDate.getTime() <= RESERVATION_DURATION) {
+        throw ApiError.AccessDenied("Вы ещё не можете зарезервировать этого кандидата, он занят")
+      }
+    }
+
+    let employee = await this.UserModel.findById(employeeId)
+
+    if (!jobForm.lastReservationDate) {
+      jobForm.lastReservationDate = new Date(startDate)
+      await jobForm.save();
+      await this.sendJobFormNotification(employee.tgId)
+      return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
+    }
+
+    const currentTime = new Date().getTime()
+    const timeDifference = currentTime - jobForm.lastReservationDate.getTime()
+
+
+    if (timeDifference > RESERVATION_DURATION) {
+      jobForm.lastReservationDate = new Date(startDate)
+      await jobForm.save();
+      await this.sendJobFormNotification(employee.tgId)
+      return (await this.JobReservationModel.create({ jobFormId, startDate, employerId, employeeId })).populate("jobFormId")
+    }
+
+    throw ApiError.AccessDenied("Вы ещё не можете зарезервировать этого кандидата, он занят")
+  }
+
+  @Post("get-reserved")
+  async getReservedJob(
+    @Body("employerId") employerId: string
+  ) {
+    let userReservations = await this.JobReservationModel.find({ employerId }).populate("jobFormId")
+    for (let r of userReservations) {
+      const currentTime = new Date().getTime()
+      if (currentTime - r.startDate.getTime() <= RESERVATION_DURATION) {
+        return r
+      }
+    }
+
+    return null;
+  }
+
+  @Post("get-by-employee-id")
+  async getByEmployeeId(
+    @Body("employeeId") employeeId: string
+  ) {
+    return await this.JobFormModel.find({ employeeId: new Types.ObjectId(employeeId) })
+  }
+
+  @Post("approve")
+  async approveJobForm(
+    @Body("jobFormId") jobFormId: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.isApproved = true;
+    candidate.markModified("isApproved")
+
+    let currentDate = new Date().toISOString()
+    candidate.lastRaiseDate = new Date(currentDate);
+    candidate.markModified("lastRaiseDate")
+
+    return await candidate.save();
+  }
+  @Post("disapprove")
+  async disapproveJobForm(
+    @Body("jobFormId") jobFormId: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.isApproved = false;
+    candidate.markModified("isApproved")
+
+    return await candidate.save();
+  }
+  @Post("boost")
+  async boostJobForm(
+    @Body("jobFormId") jobFormId: string,
+    @Body("raiseDate") raiseDate: string
+  ) {
+    let candidate = await this.JobFormModel.findById(jobFormId)
+    if (!candidate) throw ApiError.NotFound("анкета не найдена")
+
+    candidate.lastRaiseDate = new Date(raiseDate);
+    candidate.markModified("lastRaiseDate")
+
+    return await candidate.save();
+  }
+
+  @Post('job-reservation/by-employer')
+  async getEmployerJobFormsHistory(
+    @Body("employerId") employerId: string
+  ) {
+    return await this.JobReservationModel.find({
+      employerId
+    }).populate("jobFormId")
+  }
+
+  @Post('job-reservation/by-employee')
+  async getEmployeeJobReservations(
+    @Body("employeeId") employeeId: string
+  ) {
+    let weekAgo = new Date()
+    weekAgo.setDate(weekAgo.getDate() - 7)
+    let query = {
+      employeeId,
+      startDate: { $gt: weekAgo }
+    }
+    return await this.JobReservationModel.find(query).populate("jobFormId").populate({
+      path: "employerId",
+      select: {
+        company: 1,
+        email: 1,
+      }
+    })
+  }
+
+  @Post("job-reservation/submit-feedback")
+  async submitJobReservationFeedback(
+    @Body("reservationId") reservationId: string,
+    @Body("employerFeedback") employerFeedback: string | null,
+    @Body("employeeFeedback") employeeFeedback: string | null,
+  ) {
+    if (!employerFeedback && !employeeFeedback) {
+      throw ApiError.BadRequest("Неправильно передана обратная связь")
+    }
+    let currentDate = new Date()
+    if (employerFeedback) {
+      return await this.JobReservationModel.findByIdAndUpdate(reservationId, {
+        $set: {
+          employerFeedback: {
+            textContent: employerFeedback,
+            sentDate: currentDate.toISOString()
+          }
+        }
+      }, { new: true }).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
+    }
+
+    if (employeeFeedback) {
+      return await this.JobReservationModel.findByIdAndUpdate(reservationId, {
+        $set: {
+          employeeFeedback: {
+            textContent: employeeFeedback,
+            sentDate: currentDate.toISOString()
+          }
+        }
+      }, { new: true }).populate("jobFormId").populate({
+        path: "employerId",
+        select: {
+          company: 1,
+          email: 1,
+        }
+      })
+    }
+  }
+
+  @Post("job-reservation/get-by-id")
+  async getJobReservationById(
+    @Body("reservationId") reservationId: string
+  ) {
+    return await this.JobReservationModel.findById(reservationId).populate("jobFormId").populate({
+      path: "employerId",
+      select: {
+        company: 1,
+        email: 1,
+      }
+    })
+  }
+}
+
+
+=====================================
+Файл: src/job-form/job-form.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { JobFormService } from './job-form.service';
+import { JobFormController } from './job-form.controller';
+import JobFormModel from './models/job-form.model';
+import JobReservationModel from './models/job-reservation.model';
+import { MailService } from 'src/mail/mail.service';
+import UserModel from 'src/user/models/user.model';
+import { HttpModule } from '@nestjs/axios';
+
+@Module({
+  controllers: [JobFormController],
+  providers: [JobFormService, MailService],
+  imports: [JobFormModel, JobReservationModel, UserModel, HttpModule]
+})
+export class JobFormModule { }
+
+
+=====================================
+Файл: src/job-form/job-form.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class JobFormService {}
+
+
+=====================================
+Файл: src/job-form/models/job-form.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { JobFormSchema } from "../schemas/job-form.schema";
+
+let JobFormModel = MongooseModule.forFeature([{ name: 'JobForm', schema: JobFormSchema, collection: 'job-forms' }])
+export default JobFormModel
+
+
+=====================================
+Файл: src/job-form/models/job-reservation.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { JobReservationSchema } from "../schemas/job-reservation.schema";
+
+let JobReservationModel = MongooseModule.forFeature([{ name: 'JobReservation', schema: JobReservationSchema, collection: 'job-reservations' }])
+export default JobReservationModel
+
+
+=====================================
+Файл: src/job-form/schemas/job-form.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+
+export type JobFormDocument = HydratedDocument<JobFormClass>;
+
+@Schema()
+export class JobFormClass {
+  @Prop({
+    type: String,
+    required: true,
+  })
+  job: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  fullName: string;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  coverLetter: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  phone: string;
+
+  @Prop({
+    type: String,
+    required: false,
+  })
+  telegram: string;
+
+  @Prop({
+    type: String,
+    required: false,
+    default: "",
+  })
+  email: string;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: false,
+    default: null
+  })
+  employeeId: Types.ObjectId
+
+  @Prop({
+    type: Object,
+    required: true
+  })
+  video: {
+    src: string
+  };
+
+  @Prop({
+    type: Date,
+    required: false
+  })
+  lastReservationDate: Date
+
+  @Prop({
+    type: Date,
+    required: false,
+  })
+  lastRaiseDate: Date
+
+  @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  salaryFrom: number | null
+
+  @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  salaryTo: number | null
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  experience: string
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  workFormat: string
+
+
+  @Prop({
+    type: Boolean,
+    default: false
+  })
+  isApproved: Boolean
+}
+
+export const JobFormSchema = SchemaFactory.createForClass(JobFormClass);
+
+
+=====================================
+Файл: src/job-form/schemas/job-reservation.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+
+export type UserDocument = HydratedDocument<JobReservationClass>;
+
+class Feedback {
+  @Prop({ type: String, required: false, default: null })
+  textContent: string | null;
+
+  @Prop({ type: Date, required: false, default: null })
+  sentDate: Date | null;
+}
+
+@Schema({ timestamps: true })
+export class JobReservationClass {
+  @Prop({
+    type: Date,
+    required: true,
+  })
+  startDate: Date;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "JobForm",
+    required: true
+  })
+  jobFormId: Types.ObjectId
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
+    index: true,
+  })
+  employerId: Types.ObjectId
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    index: true,
+    required: true,
+  })
+  employeeId: Types.ObjectId
+
+  @Prop({
+    type: Feedback,
+    required: false,
+    default: () => ({ textContent: null, sentDate: null })
+  })
+  employerFeedback: Feedback;
+
+  @Prop({
+    type: Feedback,
+    required: false,
+    default: () => ({ textContent: null, sentDate: null })
+  })
+  employeeFeedback: Feedback;
+}
+
+export const JobReservationSchema = SchemaFactory.createForClass(JobReservationClass);
+
+JobReservationSchema.index({ employerId: 1, employeeId: 1, startDate: -1 }, { expires: 30 * 24 * 60 * 60 * 1000 });
+
+
+=====================================
+Файл: src/job-form-fill-request/interfaces/job-form-fill-request.interface.ts
+=====================================
+
+export interface JobFormFillRequest {
+  job: string
+  employee: string
+  startDate: string | null
+  endDate: string | null
+  manager: string | null
+}
+
+
+=====================================
+Файл: src/job-form-fill-request/job-form-fill-request.controller.ts
+=====================================
+
+import { Controller, Post, Body, Get } from '@nestjs/common';
+import { JobFormFillRequestService } from './job-form-fill-request.service';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+
+// all about MongoDB
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { JobFormFillRequestClass } from './schemas/job-form-fill-request.schema';
+import { JobFormFillRequest } from './interfaces/job-form-fill-request.interface';
+import type { User } from "../user/interfaces/user.interface"
+import { UserClass } from 'src/user/schemas/user.schema';
+
+
+@Controller('job-form-fill-request')
+export class JobFormFillRequestController {
+  constructor(
+    private readonly jobFormFillRequestService: JobFormFillRequestService,
+    @InjectModel('JobFormFillRequest') private JobFormFillRequestModel: Model<JobFormFillRequestClass>,
+    @InjectModel('User') private UserModel: Model<UserClass>,
+    private readonly httpService: HttpService,
+  ) { }
+
+  // Вызывается при регистрации employee, когда он пришел по ссылке вида:
+  // http://localhost:3011/registration/employee?name=%D0%BF%D0%BE%D0%BF%D0%B8&vacancy=%D0%9F%D1%80%D0%BE%D0%B4%D0%B0%D0%B6%D0%B8&email=popi%40gmail.com&tgId=1155714398
+  @Post("create-short")
+  async createShort(
+    @Body("employeeId") employeeId: string,
+    @Body("job") job: string,
+    @Body("tgId") tgId: number | null
+  ) {
+    let jobFormFillRequest = await this.JobFormFillRequestModel.create({
+      employee: employeeId,
+      job
+    })
+
+    if (tgId) {
+      const interviewUrl = new URL(`/employee/send-job-form-fill-request?request_id=${jobFormFillRequest._id}`, process.env.CLIENT_URL).toString()
+
+      const message = `🎉 Спасибо за регистрацию!
+
+Вы выбрали позицию: *${job}* — отличный выбор! 🙌
+
+Теперь приглашаем вас назначить удобное время для короткого видео-интервью.  
+Это займёт всего 15–20 минут и поможет нам лучше узнать вас.
+
+Нажмите кнопку ниже, чтобы выбрать слот 👇`;
+
+      const buttons = [
+        [
+          {
+            text: '📹 Выбрать время для интервью',
+            url: interviewUrl,
+          },
+        ],
+      ];
+
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            reply_markup: { inline_keyboard: buttons },
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
+    }
+
+    return jobFormFillRequest
+  }
+  @Post("create")
+  async create(
+    @Body("request") jobFormFillRequest: JobFormFillRequest,
+  ) {
+    return await this.JobFormFillRequestModel.create(jobFormFillRequest)
+  }
+
+
+  @Post("update")
+  async update(
+    @Body("requestId") requestId: string,
+    @Body("tgId") tgId: number | null,
+    @Body("request") jobFormFillRequest: JobFormFillRequest,
+  ) {
+    let updateResult = await this.JobFormFillRequestModel.findByIdAndUpdate(requestId,
+      { $set: { startDate: jobFormFillRequest.startDate, endDate: jobFormFillRequest.endDate } },
+      { new: true }
+    )
+
+    if (tgId) {
+      const message = `✅ Поздравляем! Вы успешно завершили заявку на видео-интервью *${jobFormFillRequest.job}*.
+
+Мы получили ваше расписание и скоро свяжемся с вами для подтверждения.
+
+Спасибо, что вы с нами! 🙏`
+      await firstValueFrom(
+        this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+          botType: 'employee',
+          telegramId: tgId,
+          text: message,
+          options: {
+            parse_mode: 'Markdown'
+          }
+        }, {
+          headers: { 'x-api-key': process.env.TG_API_KEY }
+        })
+      );
+    }
+
+    return updateResult
+  }
+
+  @Post("get-by-id")
+  async getById(
+    @Body("requestId") requestId: string,
+  ) {
+    return await this.JobFormFillRequestModel.findById(requestId)
+  }
+
+  @Post("get-by-employee")
+  async getByEmployee(
+    @Body("employeeId") employeeId: string,
+  ) {
+    return await this.JobFormFillRequestModel.find({
+      employee: employeeId,
+    })
+  }
+
+  @Post("get-all")
+  async getAllRequests() {
+    return await this.JobFormFillRequestModel
+      .find({ startDate: { $gte: Date.now() }, manager: null })
+      .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
+      .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
+  }
+
+  // @Post("set-manager")
+  // async setManager(
+  //   @Body("manager") manager: string,
+  //   @Body("managerName") managerName: string,
+  //   @Body("jobRequestId") jobRequestId: string,
+  //   @Body("employeeTgId") employeeTgId: User["tgId"],
+
+  // ) {
+  //   // jobRequestId,
+  //   //     employeeTgId,
+  //   //     manager,
+  //   //     managerName
+
+  //   return await this.JobFormFillRequestModel.findByIdAndUpdate(jobRequestId, { $set: { manager } })
+  // }
+
+  @Post("set-manager")
+  async setManager(
+    @Body("manager") manager: string,
+    @Body("managerName") managerName: string,
+    @Body("jobRequestId") jobRequestId: string,
+    @Body("employeeTgId") employeeTgId: number, // ← number, а не User["tgId"]
+  ) {
+    // Обновляем заявку
+    const updatedRequest = await this.JobFormFillRequestModel.findByIdAndUpdate(
+      jobRequestId,
+      { $set: { manager } },
+      { new: true }
+    );
+
+    // Отправляем уведомление в Telegram
+    if (employeeTgId) {
+      try {
+        await firstValueFrom(
+          this.httpService.post(new URL('/api/send', process.env.TG_API_URL).toString(), {
+            botType: 'employee',
+            telegramId: employeeTgId,
+            text: `👋 Здравствуйте!
+
+Ваша заявка на позицию *${updatedRequest.job}* принята.
+
+С вами свяжется рекрутер: *${managerName}*.
+
+Ожидайте личного сообщения в ближайшее время!`,
+            options: {
+              parse_mode: 'Markdown'
+            }
+          }, {
+            headers: { 'x-api-key': process.env.TG_API_KEY }
+          })
+        );
+
+        let startDateObj = new Date(updatedRequest.startDate)
+        let startDate = startDateObj.getTime();
+        let notificationDelta = 2 * 60 * 60 * 1000;
+
+
+        const timeString = startDateObj.toLocaleTimeString('ru-RU', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'Europe/Moscow', // Moscow timezone
+        });
+
+        const reminderMsg = `👋 Собеседование в *${timeString} по МСК*\n` +
+          `Ваш рекрутер: *${managerName}* ждет вас!`;
+
+        let confirmUrl = new URL(`/employee/confirm-job-form-fill-request?_id=${jobRequestId}`, process.env.CLIENT_URL).toString()
+
+        const buttons =
+          [
+            [
+              {
+                text: '📹 Подтвердить собеседование',
+                url: confirmUrl,
+              },
+            ],
+          ]
+        await firstValueFrom(
+          this.httpService.post(new URL('/api/schedule', process.env.TG_API_URL).toString(), {
+            botType: 'employee',
+            telegramId: employeeTgId,
+            text: reminderMsg,
+            // new Date(startDate - notificationDelta),
+            timestamp: Date.now() + 20000,
+            options: {
+              parse_mode: 'Markdown',
+              reply_markup: { inline_keyboard: buttons },
+            }
+          }, {
+            headers: { 'x-api-key': process.env.TG_API_KEY }
+          })
+        );
+      } catch (error) {
+        console.error(`Не удалось отправить Telegram-уведомление сотруднику ${employeeTgId}:`, error.message);
+      }
+    }
+
+    return updatedRequest;
+  }
+
+  @Post("get-by-manager")
+  async getByManager(
+    @Body("manager") manager: string
+  ) {
+    return await this.JobFormFillRequestModel.find({ manager, startDate: { $gte: Date.now() }, })
+      .sort({ startDate: 1 }) // 1 — по возрастанию, -1 — по убыванию
+      .populate({ path: "employee", select: ['email', "name", "tgUsername", "tgId"] })
+  }
+
+  // @Get("possible-time-slots")
+  // async getPossibleTimeSlots() {
+  //   let adminEmails = process.env.ADMIN_EMAILS.split(",")
+
+  //   let managers = await this.UserModel.find({ roles: "manager", email: { "$nin": adminEmails } })
+  //   let managerIds = managers.map((m) => m._id.toString());
+
+  //   console.log(managers);
+
+  //   let allTakenSlots = await this.JobFormFillRequestModel.find({ startDate: { "$gte": Date.now() } })
+
+  //   for (let slot of allTakenSlots) {
+  //     let managersInUseForOneSlot = 0;
+  //     for (let managerId of managerIds) {
+  //       if (slot.manager.toString() == managerId) {
+  //         managersInUseForOneSlot++;
+  //       }
+  //     }
+
+  //   }
+
+  //   return null;
+  // }
+
+  @Get("possible-time-slots")
+  async getPossibleTimeSlots() {
+    const adminEmails = process.env.ADMIN_EMAILS.split(",");
+
+    // 1. Получаем всех менеджеров
+    const managers = await this.UserModel.find({
+      roles: "manager",
+      email: { $nin: adminEmails }
+    });
+
+    const totalManagers = managers.length;
+
+    // 2. Получаем все занятые слоты
+    const allTakenSlots = await this.JobFormFillRequestModel.find({
+      startDate: { "$gte": Date.now() }
+    });
+
+    // Группируем по startDate
+    const slotsMap = new Map<string, typeof allTakenSlots>();
+
+    for (const slot of allTakenSlots) {
+      const key = slot.startDate.toString();
+
+      if (!slotsMap.has(key)) {
+        slotsMap.set(key, []);
+      }
+
+      slotsMap.get(key)!.push(slot);
+    }
+
+    // 3. Формируем ответ
+    const result: { startDate: string; availableManagers: number }[] = [];
+
+    for (const [dateKey, slots] of slotsMap.entries()) {
+      let managersInUse = new Set();
+      for (let s of slots) {
+        if (s.manager != null) {
+          managersInUse.add(s.manager);
+        }
+      }
+      const available = totalManagers - managersInUse.size;
+
+      result.push({
+        startDate: slots[0].startDate.toISOString(),
+        availableManagers: available
+      });
+    }
+
+    return result;
+  }
+
+  @Post("get-by-id-for-confirmation")
+  async getByIdForConfirmation(
+    @Body("requestId") requestId: string,
+  ) {
+    return (await this.JobFormFillRequestModel.findById(requestId).exec())
+      .populate("manager", { select: ["name"] })
+  }
+
+  @Post("employee-confirm")
+  async employeeConfirm(
+    @Body("requestId") requestId: string,
+  ) {
+    return await this.JobFormFillRequestModel
+      .findOneAndUpdate({ _id: requestId, confirmedByEmployee: false },
+        { confirmedByEmployee: true },
+        { new: true })
+  }
+}
+
+
+=====================================
+Файл: src/job-form-fill-request/job-form-fill-request.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { JobFormFillRequestService } from './job-form-fill-request.service';
+import { JobFormFillRequestController } from './job-form-fill-request.controller';
+import JobFormFillRequestModel from './models/job-form-fill-request.model';
+import UserModel from 'src/user/models/user.model';
+import { HttpModule } from '@nestjs/axios';
+
+@Module({
+  imports: [JobFormFillRequestModel, UserModel, HttpModule],
+  controllers: [JobFormFillRequestController],
+  providers: [JobFormFillRequestService],
+})
+export class JobFormFillRequestModule { }
+
+
+=====================================
+Файл: src/job-form-fill-request/job-form-fill-request.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class JobFormFillRequestService {}
+
+
+=====================================
+Файл: src/job-form-fill-request/models/job-form-fill-request.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { JobFormFillRequestSchema } from "../schemas/job-form-fill-request.schema";
+
+let JobFormFillRequestModel = MongooseModule.forFeature([{ name: 'JobFormFillRequest', schema: JobFormFillRequestSchema, collection: 'jobformfillrequests' }])
+export default JobFormFillRequestModel
+
+
+=====================================
+Файл: src/job-form-fill-request/schemas/job-form-fill-request.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
+
+export type JobFormFillRequestDocument = HydratedDocument<JobFormFillRequestClass>;
+
+@Schema({
+  timestamps: true,
+})
+export class JobFormFillRequestClass {
+  @Prop({
+    type: String,
+    required: true,
+  })
+  job: string;
+
+  @Prop({
+    type: Date,
+    required: false,
+    default: null
+  })
+  startDate: Date;
+
+  @Prop({
+    type: Date,
+    required: false,
+    default: null,
+    expires: 10 * 24 * 60 * 60,
+  })
+  endDate: Date;
+
+  @Prop({
+    type: Boolean,
+    default: false
+  })
+  confirmedByEmployee: boolean;
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
+  })
+  employee: Types.ObjectId
+
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: false,
+    default: null
+  })
+  manager: Types.ObjectId
+}
+
+export const JobFormFillRequestSchema = SchemaFactory.createForClass(JobFormFillRequestClass);
+
+
+=====================================
+Файл: src/mail/mail.module.ts
+=====================================
+
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { Module } from '@nestjs/common';
+import { MailService } from './mail.service';
+import { join } from 'path';
+
+
+@Module({
+  imports: [
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASSWORD,
+        },
+      },
+      defaults: {
+        from: '"Не отвечайте на это письмо" <noreply@grishadzyin@gmail.com>',
+      },
+      template: {
+        dir: join(__dirname, 'templates'),
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
+  ],
+  providers: [MailService],
+  exports: [MailService], // 👈 export for DI
+})
+
+export class MailModule { }
+
+
+=====================================
+Файл: src/mail/mail.service.ts
+=====================================
+
+import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable } from '@nestjs/common';
+
+// types
+import type { User } from 'src/user/interfaces/user.interface'
+
+@Injectable()
+export class MailService {
+  constructor(private mailerService: MailerService) { }
+
+
+  public async sendJobFormCreatedNotification(email: string, name: string) {
+    let registerUrl = `${process.env.CLIENT_URL}/registration/employee?email=${email}`
+
+    await this.mailerService.sendMail({
+      to: email,
+      from: '"Команда проекта Сколько" <grishadzyin@gmail.com>',
+      subject: 'Ваша анкета создана!',
+      template: './job-form-created', // `.hbs` extension is appended automatically
+      context: {
+        name: name,
+        registerUrl: registerUrl
+      },
+    })
+  }
+
+  public async sendUserConfirmation(user: any) {
+    try {
+      // const url = `example.com/auth/confirm?token=${token}`;
+      await this.mailerService.sendMail({
+        to: user.email,
+        from: '"Команда проекта Сколько" <grishadzyin@gmail.com>', // override default from
+        subject: 'Спасибо за регистрацию',
+        template: './confirmation', // `.hbs` extension is appended automatically
+        context: { // ✏️ filling curly brackets with content
+          name: user.name,
+          // url,
+        },
+      });
+    } catch (error) {
+
+    }
+  }
+
+  public async sendOrderNotifications(userEmails: string[], order: any) {
+    return await this.mailerService.sendMail({
+      to: userEmails,
+      from: '"Команда проекта Сколько" <grishadzyin@gmail.com>', // override default from
+      subject: 'Новый заказ',
+      template: 'order', // `.hbs` extension is appended automatically
+      context: { order: order._doc }
+    });
+  }
+
+  public async sendResetLink(link: string, email: string) {
+    return await this.mailerService.sendMail({
+      to: email,
+      from: '"Команда проекта Сколько" <grishadzyin@gmail.com>', // override default from
+      subject: 'Восстановление пароля',
+      template: 'reset-pasword', // `.hbs` extension is appended automatically
+      context: { link }
+    });
+  }
+}
+
+
+=====================================
+Файл: src/main.ts
+=====================================
+
+import * as dotenv from 'dotenv';
+dotenv.config();
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './exceptions/http-exception.filter';
+
+// Load environment variables at the very beginning
+
+import * as cookieParser from 'cookie-parser';
+import { ThrottlerGuard } from '@nestjs/throttler';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule)
+
+  app.enableCors({
+    origin: [process.env.CLIENT_URL, 'http://localhost:3011'],
+    credentials: true
+  })
+  app.useGlobalFilters(new HttpExceptionFilter())
+
+  app.use(cookieParser())
+
+  await app.listen(process.env.PORT)
+}
+bootstrap()
+
+
+=====================================
+Файл: src/roles/interfaces/role.interface.ts
+=====================================
+
+import mongoose from "mongoose"
+
+export interface Role {
+    type: string,
+}
+
+
+=====================================
+Файл: src/roles/roles.module.ts
+=====================================
+
+import { Global, Module } from '@nestjs/common';
+import { RolesService } from './roles.service';
+
+@Global()
+@Module({
+  providers: [RolesService]
+})
+export class RolesModule {}
+
+
+=====================================
+Файл: src/roles/roles.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import { Role } from './interfaces/role.interface'
+import mongoose from 'mongoose';
+
+@Injectable()
+export class RolesService {
+  getTypeFromRole(role: Role): string {
+    return role.type
+  }
+  isAdmin(roles: Role[]): boolean {
+    return roles.map((role: Role) => (role.type)).includes("admin")
+  }
+  isManager(roles: Role[]): boolean {
+    return roles.map((role: Role) => (role.type)).includes("manager")
+  }
+
+  // getRolesWithRest(roles: Role, org_id: string): string[] {
+  //   roles.push(`manager-${org_id}`)
+  //   return roles
+  // }
+
+  // getRolesWithoutRest(roles: Role, org_id: string): string[] {
+  //   return roles.filter(role => !role.includes(`manager-${org_id}`))
+  // }
+
+  //is some admin
+
+
+  // getType(roles: string[]): string {
+  //   if (this.isGlobalAdmin(roles))
+  //     return 'глобальный админ'
+
+  //   if (this.isSomeAdmin(roles))
+  //     return 'админ'
+
+  //   return 'пользователь'
+  // }
+}
+
+
+=====================================
+Файл: src/s3/bucket.ts
+=====================================
+
+import * as AWS from 'aws-sdk'
+// не трогать! иначе не будет env
+import 'dotenv/config'
+
+class YandexCloud {
+  aws: any
+
+  constructor() {
+    this.aws = new AWS.S3({
+      endpoint: 'https://storage.yandexcloud.net',
+      accessKeyId: process.env.YC_KEY_ID, // берем ключ из переменной окружения
+      secretAccessKey: process.env.YC_SECRET, // берем секрет из переменной окружения
+      region: 'ru-central1',
+      httpOptions: {
+        timeout: 10000,
+        connectTimeout: 10000
+      },
+    });
+  }
+
+  Upload = async ({ file, path, fileName }): Promise<any> => {
+    try {
+      const params = {
+        Bucket: process.env.YC_BUCKET_NAME, // название созданного bucket
+        Key: `${path}/${fileName}`, // путь и название файла в облаке (path без слэша впереди)
+        Body: file.buffer, // сам файл
+        ContentType: 'text/plain', // тип файла
+      }
+
+      const aws = this.aws
+      const result = await new Promise(function (resolve, reject) {
+
+        aws.upload(params, function (err, data) {
+          if (err) return reject(err);
+          return resolve(data);
+        });
+      });
+      return result;
+    } catch (e) {
+
+      console.error(e);
+    }
+  }
+
+  public async generatePresignedUrl(objectKey: string) {
+    try {
+      const params = {
+        Bucket: process.env.YC_BUCKET_NAME,
+        Key: objectKey,
+        Expires: 60 * 5, // URL expiration time in seconds
+        ContentType: 'application/octet-stream', // Set the content type
+      };
+      const url = await this.aws.getSignedUrlPromise('putObject', params);
+      return url;
+    } catch (error) {
+      console.error('Error generating pre-signed URL', error);
+      throw error;
+    }
+  }
+  public async uploadVideo(fileBuffer: Buffer, presignedUrl: string) {
+    const response = await fetch(presignedUrl, {
+      method: 'PUT',
+      body: fileBuffer,
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        // Optionally set other headers
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`);
+    }
+
+    console.log('File uploaded successfully!', response);
+    return response
+  }
+
+}
+
+const YaCloud = new YandexCloud();
+export default YaCloud
+
+
+=====================================
+Файл: src/s3/s3.module.ts
+=====================================
+
+import { Global, Module } from '@nestjs/common';
+import { S3Service } from './s3.service';
+
+@Global()
+@Module({
+  providers: [S3Service]
+})
+export class S3Module {}
+
+
+=====================================
+Файл: src/s3/s3.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
+export class S3Service {}
+
+
+=====================================
+Файл: src/t-payments/interfaces/employer-notification.interface.ts
+=====================================
+
+export interface EmployerNotification {
+  TerminalKey: string
+  Amount: number
+  OrderId: string // _id в нашей системе
+  Success: boolean
+  Status: string
+  Token: string // подпись
+  PaymentId: number
+}
+
+
+=====================================
+Файл: src/t-payments/interfaces/t-bank-payment-response.interface.ts
+=====================================
+
+export interface TBankPaymentResponse {
+  /** Идентификатор терминала. Выдается мерчанту в Т‑Бизнес при заведении терминала. */
+  TerminalKey: string; // <= 20 символов
+
+  /** Сумма в копейках. */
+  Amount: number; // <= 20 символов (число)
+
+  /** Идентификатор заказа в системе мерчанта. Должен быть уникальным для каждой операции. */
+  OrderId: string; // <= 36 символов
+
+  /** Успешность прохождения запроса — true/false. */
+  Success: boolean;
+
+  /** Статус транзакции. */
+  Status: string; // <= 20 символов
+
+  /** Идентификатор платежа в системе Т‑Бизнес. */
+  PaymentId: string; // <= 20 символов
+
+  /** Код ошибки. */
+  ErrorCode: string; // <= 20 символов
+
+  /** Ссылка на платежную форму. Возвращается только для мерчантов с платежной формой Т-Банка. */
+  PaymentURL?: string; // <= 100 символов, optional
+
+  /** Краткое описание ошибки. */
+  Message?: string; // <= 255 символов, optional
+
+  /** Подробное описание ошибки. */
+  Details?: string; // optional
+}
+
+
+=====================================
+Файл: src/t-payments/models/employer-payment.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { EmployerPaymentOrderSchema } from "../schemas/employer-payment.schema";
+
+let EmployerPaymentOrderModel = MongooseModule.forFeature([{ name: 'EmployerPaymentOrder', schema: EmployerPaymentOrderSchema, collection: 'employerpaymentorders' }])
+export default EmployerPaymentOrderModel
+
+
+=====================================
+Файл: src/t-payments/schemas/employer-payment.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+
+export type EmployerPaymentOrderDocument = HydratedDocument<EmployerPaymentOrderClass>;
+
+@Schema({ _id: false })
+class EmployerPaymentClass {
+  @Prop({ type: String, required: true })
+  TerminalKey: string;
+
+  @Prop({ type: Number, required: true })
+  Amount: number;
+
+  @Prop({ type: Boolean, required: true })
+  Success: boolean;
+
+  /*
+  AUTHORIZED	Операция авторизована. Деньги заблокированы на карте покупателя*.
+  CONFIRMED	Операция подтверждена. Деньги списаны с карты покупателя.
+  PARTIAL_REVERSED	Частичная отмена по авторизованной операции.
+  REVERSED	Полная отмена по авторизованной операции.
+  CANCELED	Операция отменена, когда была создана платежная ссылка.
+  PARTIAL_REFUNDED	Частичный возврат по подтвержденной операции.
+  REFUNDED	Полный возврат по подтвержденной операции.
+  REJECTED	Списание денег закончилась ошибкой.
+  DEADLINE_EXPIRED	
+  Покупатель не завершил платеж в срок жизни ссылки на платежную форму. Этот срок мерчант передает в методе Инициировать платеж в параметре RedirectDueDate.
+  Платеж не прошел проверку 3DS в срок и произошло автоматическое закрытие сессии**, которая превысила срок пребывания в статусе 3DS_CHECKING — более 36 часов.
+  */
+
+  @Prop({ type: String, required: true })
+  Status: string;
+
+  @Prop({ type: String, required: true })
+  Token: string;
+
+  @Prop({ type: String, required: true })
+  PaymentId: string
+
+  @Prop({ type: String, default: "" })
+  PaymentURL: string
+}
+
+@Schema({ timestamps: true })
+export class EmployerPaymentOrderClass {
+  @Prop({
+    type: Types.ObjectId,
+    ref: "User",
+    required: true
+  })
+  user: Types.ObjectId
+
+  @Prop({
+    type: String,
+    default: "AUTHORIZED"
+  })
+  status: string
+
+  @Prop({
+    type: EmployerPaymentClass,
+    default: null
+  })
+  payment: EmployerPaymentClass | null
+}
+
+export const EmployerPaymentOrderSchema = SchemaFactory.createForClass(EmployerPaymentOrderClass);
+
+
+=====================================
+Файл: src/t-payments/t-payments.controller.ts
+=====================================
+
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Res } from '@nestjs/common';
+import { TPaymentsService } from './t-payments.service';
+import { Response } from 'express';
+
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+import type { EmployerNotification } from './interfaces/employer-notification.interface';
+import { EmployerPaymentOrderClass } from './schemas/employer-payment.schema';
+import ApiError from 'src/exceptions/errors/api-error';
+
+@Controller('t-payments')
+export class TPaymentsController {
+  constructor(private readonly tPaymentsService: TPaymentsService,
+    @InjectModel('EmployerPaymentOrder') private EmployerPaymentOrderModel: Model<EmployerPaymentOrderClass>,
+  ) { }
+
+
+  @Post("create-employer-order")
+  async createEmployerOrder(
+    @Body("employerId") employerId: string,
+    @Body("amount") amount: number,
+    @Body("email") email: string,
+  ) {
+    let order = await this.EmployerPaymentOrderModel.create({ user: employerId })
+
+    if (!order._id) {
+      throw ApiError.BadRequest("Ошибка при создании платежа")
+    }
+
+    let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount, email)
+    console.log(result);
+
+    if (result.Success) {
+      let orderFinal = await this.EmployerPaymentOrderModel.findByIdAndUpdate(
+        result.OrderId,
+        {
+          $set: {
+            status: result.Status,
+            payment: {
+              TerminalKey: result.TerminalKey,
+              Amount: result.Amount,
+              Success: result.Success,
+              Status: result.Status,
+              PaymentId: result.PaymentId,
+              PaymentURL: result?.PaymentURL || ""
+            }
+          }
+        },
+        { new: true }
+      )
+
+      return orderFinal
+    }
+    return null;
+  }
+
+  @Post("get-last-user-payment")
+  async checkSubscription(
+    @Body("userId") userId: string
+  ) {
+    try {
+      return await this.EmployerPaymentOrderModel.findOne({ user: userId })
+        .sort({ updatedAt: -1 });
+    } catch (error) {
+      return null
+    }
+  }
+
+  @Post("employer-callback")
+  async create(
+    @Body() tbankNotification: EmployerNotification,
+    @Res() res: Response
+  ) {
+    console.log("tbankNotification: ", tbankNotification);
+    try {
+      if (tbankNotification.Status == "CONFIRMED") {
+        await this.EmployerPaymentOrderModel.findByIdAndUpdate(tbankNotification.OrderId, {
+          status: tbankNotification.Status,
+          payment: {
+            TerminalKey: tbankNotification.TerminalKey,
+            Amount: tbankNotification.Amount,
+            Success: tbankNotification.Success,
+            Status: tbankNotification.Status,
+            Token: tbankNotification.Token,
+            PaymentId: tbankNotification.PaymentId,
+          }
+        })
+        return res.status(HttpStatus.OK).send("OK")
+      }
+    } catch (error) {
+
+    }
+    // error status
+    return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send()
+  }
+}
+
+
+=====================================
+Файл: src/t-payments/t-payments.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { TPaymentsService } from './t-payments.service';
+import { TPaymentsController } from './t-payments.controller';
+import EmployerPaymentOrderModel from './models/employer-payment.model';
+import { HttpModule } from '@nestjs/axios';
+
+@Module({
+  controllers: [TPaymentsController],
+  providers: [TPaymentsService],
+  imports: [EmployerPaymentOrderModel, HttpModule]
+})
+export class TPaymentsModule { }
+
+
+=====================================
+Файл: src/t-payments/t-payments.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import * as crypto from 'node:crypto'
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+import type { TBankPaymentResponse } from './interfaces/t-bank-payment-response.interface';
+
+@Injectable()
+export class TPaymentsService {
+  constructor(private readonly httpService: HttpService) { }
+
+  async createPaymentLink(
+    orderId: string, price: number, email: string,
+    // optional
+    quantity: number = 1,
+    name: string = "Доступ к платформе",
+    tax: string = "none",
+  ): Promise<TBankPaymentResponse | null> {
+    const notificationURL = process.env.API_URL + "/t-payments/employer-callback"
+
+    let tokenPayloadObject = {
+      Amount: price * quantity,
+      // NotificationURL: notificationURL,
+      OrderId: orderId,
+      Password: process.env.T_BANK_TERMINAL_PASSWORD,
+      TerminalKey: process.env.T_BANK_TERMINAL_ID,
+    }
+    console.log(tokenPayloadObject);
+
+    let tokenPayloadStr = Object.values(tokenPayloadObject).join('');
+    console.log(tokenPayloadStr);
+
+    const Token = crypto.createHash('sha256')
+      .update(tokenPayloadStr, 'utf8')
+      .digest('hex');
+
+    const reqBody = {
+      TerminalKey: process.env.T_BANK_TERMINAL_ID,
+      Amount: price * quantity,
+      OrderId: orderId,
+      Token,
+      NotificationUrl: notificationURL,
+      Receipt: {
+        Items: [{
+          Name: name,
+          Price: price,
+          Quantity: quantity,
+          Amount: price * quantity,
+          Tax: tax
+        }],
+        Taxation: "usn_income",
+        Email: email
+      }
+    }
+    console.log(process.env.T_BANK_PAYMENT_INIT_URL);
+    console.log(reqBody);
+
+    let res = await firstValueFrom(
+      this.httpService.post(process.env.T_BANK_PAYMENT_INIT_URL, reqBody)
+    );
+    return res.data;
+  }
+}
+
+
+=====================================
+Файл: src/telegram-bots/api/controllers/messages.js
+=====================================
+
+import { employeeBot, employerBot, employeeHelpBot } from "../../bots/index.js";
+
+export const sendMessageController = async (req, res) => {
+  const { botType, telegramId, text, options = {} } = req.body;
+
+  if (!['employee', 'employer', 'employee-help'].includes(botType)) {
+    return res.status(400).json({ error: 'Invalid botType' });
+  }
+  if (!telegramId || !text) {
+    return res.status(400).json({ error: 'telegramId and text are required' });
+  }
+
+  try {
+    let bot;
+    if (botType == 'employee') bot = employeeBot;
+    else if (botType == 'employer') bot = employerBot
+    else if (botType == 'employee-help') bot = employeeHelpBot
+
+    await bot.telegram.sendMessage(telegramId, text, options);
+    res.json({ status: 'sent', telegramId });
+  } catch (err) {
+    console.error(`[${botType}] Send error:`, err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+=====================================
+Файл: src/telegram-bots/api/controllers/schedule.js
+=====================================
+
+import { messageQueue } from '../../queue.js';
+import { employeeBot, employerBot } from "../../bots/index.js";
+
+export const scheduleMessageController = async (req, res) => {
+  const { botType, telegramId, text, timestamp, options = {} } = req.body;
+
+  if (!['employee', 'employer'].includes(botType)) {
+    return res.status(400).json({ error: 'Invalid botType' });
+  }
+  if (!telegramId || !text || !timestamp) {
+    return res.status(400).json({ error: 'telegramId, text and timestamp are required' });
+  }
+
+  const now = Date.now();
+  const delayMs = timestamp - now;
+
+  if (delayMs <= 0) {
+    // Отправляем сразу
+    try {
+      const bot = botType === 'employee' ? employeeBot : employerBot;
+      await bot.telegram.sendMessage(telegramId, text, options);
+      return res.json({ status: 'sent_immediately' });
+    } catch (err) {
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  try {
+    await messageQueue.add(
+      'send-delayed-message',
+      { telegramId, text, options, botType },
+      { delay: delayMs }
+    );
+    res.json({ status: 'scheduled', delayMs, timestamp: new Date(timestamp).toISOString() });
+  } catch (err) {
+    console.error(`[${botType}] Schedule error:`, err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+=====================================
+Файл: src/telegram-bots/api/router.js
+=====================================
+
+// api/router.js
+import express from 'express';
+import { sendMessageController } from './controllers/messages.js';
+import { scheduleMessageController } from "./controllers/schedule.js"
+
+const router = express.Router();
+
+// Защита (опционально): проверяем секретный ключ из .env
+router.use((req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey !== process.env.TG_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+});
+
+// Отправить мгновенное сообщение
+router.post('/send', sendMessageController);
+
+// Запланировать отложенное сообщение
+router.post('/schedule', scheduleMessageController);
+
+export default router;
+
+
+=====================================
+Файл: src/telegram-bots/bots/employee-bot.js
+=====================================
+
+import { Composer, Markup } from 'telegraf';
+
+const composer = new Composer();
+
+const VACANCIES = ['Продажи', 'Маркетинг', 'Ассистент', 'Другое'];
+
+const BASE_URL = new URL('registration/employee', process.env.CLIENT_URL).toString();
+
+composer.start(async (ctx) => {
+  const tgId = ctx.from?.id;
+  if (!tgId) {
+    return ctx.reply('Не удалось определить ваш Telegram ID.');
+  }
+
+  ctx.session = {
+    step: 'name',
+    tgId,
+    tgUsername: ctx.from.username || null,
+    name: undefined,
+    vacancy: undefined,
+    email: undefined,
+  };
+
+  await ctx.reply('👋 Добро пожаловать! Давайте начнём регистрацию.\n\nКак вас зовут?');
+});
+
+composer.on('text', async (ctx) => {
+  const text = ctx.message.text.trim();
+  const session = ctx.session || {};
+
+  if (!session.step) session.step = 'name';
+
+  if (session.step === 'name') {
+    if (text.length < 2) {
+      return ctx.reply('Имя должно быть не короче 2 символов. Попробуйте снова:');
+    }
+    session.name = text;
+    session.step = 'vacancy';
+
+    return ctx.reply(
+      'На какую вакансию вы хотите устроиться?',
+      Markup.keyboard([
+        [VACANCIES[0], VACANCIES[1]],
+        [VACANCIES[2], VACANCIES[3]],
+      ]).oneTime().resize(),
+    );
+  }
+
+  if (session.step === 'vacancy') {
+    if (!VACANCIES.includes(text)) {
+      return ctx.reply(
+        'Пожалуйста, выберите вакансию из кнопок ниже:',
+        Markup.keyboard([
+          [VACANCIES[0], VACANCIES[1]],
+          [VACANCIES[2], VACANCIES[3]],
+        ]).oneTime().resize(),
+      );
+    }
+
+    session.vacancy = text;
+    session.step = 'email';
+
+    return ctx.reply('Теперь введите ваш email:', Markup.removeKeyboard());
+  }
+
+  if (session.step === 'email') {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(text)) {
+      return ctx.reply('Некорректный email. Попробуйте снова:');
+    }
+
+    session.email = text;
+
+    const params = new URLSearchParams({
+      name: session.name,
+      vacancy: session.vacancy,
+      email: session.email,
+      tgId: String(session.tgId),
+      ...(session.tgUsername && { tgUsername: session.tgUsername }),
+    });
+
+    const link = `${BASE_URL}?${params.toString()}`;
+
+    await ctx.reply(
+      `✅ Регистрация почти завершена!\n\nНажмите кнопку ниже, чтобы завершить регистрацию 👇`,
+      {
+        reply_markup: {
+          inline_keyboard: [[{ text: '✅ Войти на платформе', url: link }]],
+        },
+        link_preview_options: { is_disabled: true },
+      },
+    );
+
+    // Пример использования отложенного сообщения (можно вызвать в любой момент)
+    // await scheduleMessageAt(session.tgId, 'Напоминание: подтвердите регистрацию!', Date.now() + 3600000);
+
+    // Сброс
+    ctx.session = { step: 'name', tgId: session.tgId, tgUsername: session.tgUsername };
+  }
+});
+
+export default composer.middleware();
+
+
+=====================================
+Файл: src/telegram-bots/bots/employee-help-bot.js
+=====================================
+
+import { Composer, Markup } from 'telegraf';
+
+const composer = new Composer();
+
+const SUPPORT_CHAT_ID = process.env.TG_EMPLOYEE_HELP_CHAT_ID;
+
+if (!SUPPORT_CHAT_ID) {
+  console.error('Ошибка: TG_EMPLOYEE_HELP_CHAT_ID не указан в .env');
+  process.exit(1);
+}
+
+// Хранилище активных обращений
+const activeRequests = new Map(); // userId → { messageId, timestamp, originalText }
+
+// Приветствие /start
+composer.start(async (ctx) => {
+  const firstName = ctx.from.first_name || 'друг';
+  await ctx.reply(
+    `👋 Привет, ${firstName}!\n\n` +
+    `Я — бот-помощник для соискателей платформы *СКОЛЬКО*.\n\n` +
+    `Просто напиши любой вопрос или проблему — я передам в поддержку.\n` +
+    `Обычно отвечают в течение 5–30 минут в рабочее время.\n\n` +
+    `⚠️ Пока не получил ответ — можешь написать только одно сообщение.`
+  );
+});
+
+// Команда /help
+composer.command('help', async (ctx) => {
+  await ctx.reply(
+    '❓ Как пользоваться ботом\n\n' +
+    'Пиши любой текст — вопрос, жалобу, предложение. Всё придёт в поддержку.\n\n' +
+    'Пока не получил ответ — можешь отправить только одно сообщение.\n\n' +
+    'Примеры:\n' +
+    '• Не могу загрузить видео\n' +
+    '• Когда будет собеседование?\n' +
+    '• Хочу изменить телефон\n\n' +
+    'Мы на связи!'
+  );
+});
+
+// Функция экранирования HTML
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+
+// Ответ от поддержки → пользователю
+// Работает только в чате поддержки (SUPPORT_CHAT_ID)
+composer.command('reply', async (ctx) => {
+  // Проверяем, что команда отправлена из чата поддержки
+  if (String(ctx.chat.id) !== SUPPORT_CHAT_ID) {
+    return; // игнорируем, если не из поддержки
+  }
+
+  const replyToMessage = ctx.message.reply_to_message;
+  if (!replyToMessage) {
+    return ctx.reply('Ответь на сообщение пользователя командой /reply');
+  }
+
+  const text = ctx.message.text.replace(/^\/reply\s+/, '').trim();
+  if (!text) {
+    return ctx.reply('Напиши текст ответа после /reply');
+  }
+
+  // Ищем userId в тексте сообщения (🆔 ID: 123456789)
+  const userIdMatch = replyToMessage.text.match(/🆔 ID: (\d+)/);
+  if (!userIdMatch) {
+    return ctx.reply('Не удалось найти ID пользователя в этом сообщении');
+  }
+
+  const userId = Number(userIdMatch[1]);
+
+  try {
+    await ctx.telegram.sendMessage(userId,
+      `👋 Ответ от поддержки:\n\n${text}\n\n` +
+      `Если нужно — продолжай писать сюда!`
+    );
+
+    // Снимаем лимит — пользователь может отправить новое обращение
+    activeRequests.delete(userId);
+
+    await ctx.reply(`Ответ отправлен пользователю ${userId}! ✅`);
+  } catch (err) {
+    console.error('Ошибка отправки ответа:', err);
+    await ctx.reply('Не удалось отправить ответ пользователю 😔');
+  }
+});
+
+// Обращение от пользователя → в поддержку
+composer.on('text', async (ctx) => {
+  // Пропускаем команды
+  if (ctx.message.text.startsWith('/')) return;
+
+  const userId = ctx.from.id;
+  const text = ctx.message.text.trim();
+
+  // Проверяем лимит
+  if (activeRequests.has(userId)) {
+    const { timestamp } = activeRequests.get(userId);
+    const timeAgo = Math.floor((Date.now() - timestamp) / 1000 / 60);
+    await ctx.reply(
+      `⚠️ Ты уже отправил обращение ${timeAgo} минут назад.\n` +
+      `Дождись ответа от поддержки, прежде чем писать новое.\n\n` +
+      `Если долго нет ответа — напиши @jet_green`
+    );
+    return;
+  }
+
+  const messageToSupport =
+    '📩 <b>Новое обращение от соискателя</b>\n\n' +
+    `👤 Имя: ${escapeHtml(ctx.from.first_name)} ${escapeHtml(ctx.from.last_name || '')}\n` +
+    `🆔 ID: ${userId}\n` +
+    `📧 @${escapeHtml(ctx.from.username || 'нет')}\n` +
+    `⏰ ${new Date().toLocaleString('ru-RU')}\n\n` +
+    `Сообщение:\n${escapeHtml(text)}`;
+
+  try {
+    const sentMessage = await ctx.telegram.sendMessage(SUPPORT_CHAT_ID, messageToSupport, {
+      parse_mode: 'HTML'
+    });
+
+    // Сохраняем обращение
+    activeRequests.set(userId, {
+      messageId: sentMessage.message_id,
+      timestamp: Date.now(),
+      originalText: text
+    });
+
+    await ctx.reply(
+      '✅ Сообщение отправлено в поддержку!\n\n' +
+      'Мы скоро ответим 🙌\n' +
+      'Пока ждёшь — можешь отправить только одно сообщение.'
+    );
+  } catch (err) {
+    console.error('Ошибка отправки в поддержку:', err);
+    await ctx.reply('😔 Что-то пошло не так... Попробуй позже или напиши @jet_green');
+  }
+});
+// Экспорт middleware
+export default composer.middleware();
+
+
+=====================================
+Файл: src/telegram-bots/bots/employer-bot.js
+=====================================
+
+import { Composer, Markup } from 'telegraf';
+
+const composer = new Composer();
+
+const BASE_URL = new URL('registration/employer', process.env.CLIENT_URL).toString();
+
+composer.start(async (ctx) => {
+  const tgId = ctx.from?.id;
+  if (!tgId) {
+    return ctx.reply('Не удалось определить ваш Telegram ID.');
+  }
+
+  ctx.session = {
+    step: 'name',
+    tgId,
+    tgUsername: ctx.from.username || null,
+    name: undefined,
+    inn: undefined,
+    email: undefined,
+  };
+
+  await ctx.reply('👋 Добро пожаловать! Давайте зарегистрируем вас как работодателя.\n\nКак вас зовут?');
+});
+
+composer.on('text', async (ctx) => {
+  const text = ctx.message.text.trim();
+  const session = ctx.session || {};
+
+  if (!session.step) session.step = 'name';
+
+  if (session.step === 'name') {
+    if (text.length < 2) {
+      return ctx.reply('Имя должно быть не короче 2 символов. Попробуйте снова:');
+    }
+    session.name = text;
+    session.step = 'inn';
+    return ctx.reply('Укажите ИНН вашей компании (10 или 12 цифр):');
+  }
+
+  if (session.step === 'inn') {
+    const innRegex = /^\d{10,12}$/;
+    if (!innRegex.test(text)) {
+      return ctx.reply('ИНН должен содержать 10 или 12 цифр. Попробуйте снова:');
+    }
+    session.inn = text;
+    session.step = 'email';
+    return ctx.reply('Теперь укажите рабочий email компании:');
+  }
+
+  if (session.step === 'email') {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(text)) {
+      return ctx.reply('Некорректный email. Попробуйте снова:');
+    }
+
+    session.email = text;
+
+    const params = new URLSearchParams({
+      name: session.name,
+      inn: session.inn,
+      email: session.email,
+      tgId: String(session.tgId),
+      ...(session.tgUsername && { tgUsername: session.tgUsername }),
+    });
+
+    const link = `${BASE_URL}?${params.toString()}`;
+
+    await ctx.reply(
+      `✅ Регистрация почти завершена!\n\nНажмите кнопку ниже, чтобы завершить 👇`,
+      {
+        reply_markup: {
+          inline_keyboard: [[{ text: '✅ Завершить регистрацию', url: link }]],
+        },
+        link_preview_options: { is_disabled: true },
+      },
+    );
+
+    ctx.session = {
+      step: 'name',
+      tgId: session.tgId,
+      tgUsername: session.tgUsername,
+    };
+  }
+});
+
+export default composer.middleware();
+
+
+=====================================
+Файл: src/telegram-bots/bots/index.js
+=====================================
+
+import { Telegraf } from 'telegraf';
+
+export const employeeBot = new Telegraf(process.env.TG_EMPLOYEE_REGISTRATION_BOT_TOKEN);
+export const employeeHelpBot = new Telegraf(process.env.TG_EMPLOYEE_HELP_BOT_TOKEN);
+export const employerBot = new Telegraf(process.env.TG_EMPLOYER_REGISTRATION_BOT_TOKEN);
+
+
+=====================================
+Файл: src/telegram-bots/index.js
+=====================================
+
+import 'dotenv/config';
+
+import { employeeBot as employee, employerBot as employer, employeeHelpBot as employeeHelp } from './bots/index.js';
+import { createSession } from './session.js';
+import { startMessageWorker, closeQueue } from './queue.js';
+import employeeBotLogic from './bots/employee-bot.js';
+import employeeHelpBotLogic from './bots/employee-help-bot.js';
+import employerBotLogic from './bots/employer-bot.js';
+import express from 'express';
+import apiRouter from './api/router.js';
+
+async function startBots() {
+  console.log('🚀 Запуск Telegram-ботов + очередей...');
+
+  const worker = startMessageWorker();
+
+  employee.use(createSession('employee'));
+  employee.use(employeeBotLogic);
+  employee.launch({ dropPendingUpdates: true });
+  console.log('👷 Employee Bot запущен');
+
+  employeeHelp.use(createSession('employee-help'));
+  employeeHelp.use(employeeHelpBotLogic);
+  employeeHelp.launch({ dropPendingUpdates: true });
+  console.log('🆘 EmployeeHelp Bot запущен');
+
+  employer.use(createSession('employer'));
+  employer.use(employerBotLogic);
+  employer.launch({ dropPendingUpdates: true });
+  console.log('👔 Employer Bot запущен');
+
+  // Запускаем API-сервер
+  const app = express();
+  app.use(express.json());
+  app.use('/api', apiRouter); // все эндпоинты под /api
+
+  const PORT = process.env.TG_API_PORT || 4000;
+  app.listen(PORT, () => {
+    console.log(`Telegram API сервер на http://localhost:${PORT}`);
+  });
+
+  console.log('Готово! Всё запущено.');
+
+  const shutdown = async () => {
+    console.log('Остановка...');
+    employee.stop('SIGINT');
+    employer.stop('SIGINT');
+    worker.close();
+    await closeQueue();
+    process.exit(0);
+  };
+
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
+}
+
+startBots().catch((err) => {
+  console.error('Ошибка запуска:', err);
+  process.exit(1);
+});
+
+
+=====================================
+Файл: src/telegram-bots/package.json
+=====================================
+
+{
+  "name": "telegram-bots",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {}
+}
+
+
+=====================================
+Файл: src/telegram-bots/queue.js
+=====================================
+
+import { Queue, Worker } from 'bullmq';
+import IORedis from 'ioredis';
+
+const connection = new IORedis({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: Number(process.env.REDIS_PORT) || 6379,
+  maxRetriesPerRequest: null,
+});
+
+export const messageQueue = new Queue('delayed-messages', { connection });
+
+export function startMessageWorker() {
+  const worker = new Worker(
+    'delayed-messages',
+    async (job) => {
+      const { telegramId, text, options, botType } = job.data;
+
+      console.log(`[Worker] Отправка отложенного сообщения в ${botType} → ${telegramId}`);
+
+      const { sendEmployeeMessage, sendEmployerMessage } = await import('./senders.js');
+
+      try {
+        if (botType === 'employee') {
+          await sendEmployeeMessage(telegramId, text, options);
+        } else if (botType === 'employer') {
+          await sendEmployerMessage(telegramId, text, options);
+        } else {
+          throw new Error(`Неизвестный тип бота: ${botType}`);
+        }
+      } catch (err) {
+        console.error(`Ошибка отправки в ${botType}:`, err);
+        throw err;
+      }
+    },
+    { connection },
+  );
+
+  worker.on('completed', (job) => {
+    console.log(`[Worker] Задача ${job.id} выполнена`);
+  });
+
+  worker.on('failed', (job, err) => {
+    console.error(`[Worker] Задача ${job.id} провалилась:`, err);
+  });
+
+  return worker;
+}
+
+export async function closeQueue() {
+  await messageQueue.close();
+}
+
+
+=====================================
+Файл: src/telegram-bots/senders.js
+=====================================
+
+import { Telegraf } from 'telegraf';
+
+const employeeSender = new Telegraf(process.env.TG_EMPLOYEE_REGISTRATION_BOT_TOKEN);
+const employerSender = new Telegraf(process.env.TG_EMPLOYER_REGISTRATION_BOT_TOKEN);
+
+export async function sendEmployeeMessage(telegramId, text, options = {}) {
+  try {
+    await employeeSender.telegram.sendMessage(telegramId, text, options);
+    console.log(`[Send] employee → ${telegramId}`);
+  } catch (err) {
+    console.error(`[Send Error] employee ${telegramId}:`, err);
+    throw err;
+  }
+}
+
+export async function sendEmployerMessage(telegramId, text, options = {}) {
+  try {
+    await employerSender.telegram.sendMessage(telegramId, text, options);
+    console.log(`[Send] employer → ${telegramId}`);
+  } catch (err) {
+    console.error(`[Send Error] employer ${telegramId}:`, err);
+    throw err;
+  }
+}
+
+
+=====================================
+Файл: src/telegram-bots/session.js
+=====================================
+
+import { session } from 'telegraf';
+
+export function createSession(botName) {
+  const store = new Map();
+
+  return session({
+    defaultSession: () => ({}),
+    getSessionKey: (ctx) => {
+      if (ctx.from && ctx.chat) {
+        return `${botName}:${ctx.from.id}:${ctx.chat.id}`;
+      }
+      return null;
+    },
+    store,
+  });
+}
+
+
+=====================================
+Файл: src/token/interfaces/token.interface.ts
+=====================================
+
+import mongoose from "mongoose"
+
+export interface Token {
+  _id: mongoose.Types.ObjectId
+  refreshToken: string
+}
+
+
+=====================================
+Файл: src/token/models/token.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { TokenSchema } from "../schemas/token.schema";
+
+let TokenModel = MongooseModule.forFeature([{ name: 'Token', schema: TokenSchema, collection: 'tokens' }])
+export default TokenModel
+
+
+=====================================
+Файл: src/token/schemas/token.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+
+export type TokenDocument = HydratedDocument<TokenClass>
+
+@Schema()
+export class TokenClass {
+  @Prop({ 
+    type: String, 
+    required: true 
+  })
+  refreshToken: string
+}
+
+export const TokenSchema = SchemaFactory.createForClass(TokenClass)
+
+
+=====================================
+Файл: src/token/token.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import TokenModel from './models/token.model';
+import { TokenService } from './token.service';
+
+@Module({
+  imports: [
+    TokenModel,
+    JwtModule
+  ],
+  providers: [TokenService],
+  exports: [TokenService]
+})
+export class TokenModule {}
+
+
+=====================================
+Файл: src/token/token.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose';
+import * as jwt from 'jsonwebtoken'
+import { Model } from 'mongoose';
+import { User } from 'src/user/interfaces/user.interface';
+import { Token } from './interfaces/token.interface';
+import { TokenClass } from './schemas/token.schema';
+
+@Injectable()
+export class TokenService {
+	constructor(
+		@InjectModel('Token') private TokenModel: Model<TokenClass>,
+	) { }
+
+	validateResetToken(token: string, secret: string): any {
+		try {
+			return jwt.verify(token, secret)
+		} catch {			
+			return null
+		}
+	}
+
+	createResetToken(payload: any, secret: string): string {
+		try {
+			return jwt.sign(payload, secret, { expiresIn: '7d' })
+		} catch {
+			return null
+		}
+	}
+
+	generateTokens(payload: any): { accessToken: string, refreshToken: string } {
+		try {
+			const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '7d' })
+			const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' })
+
+			return { accessToken, refreshToken }
+		} catch {
+			return { accessToken: null, refreshToken: null }
+		}
+	}
+
+	generateAccessToken(payload: any): string {
+		try {
+			const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: '7d' })
+			return accessToken
+		} catch (error) {
+			return null
+		}
+	}
+
+	validateAccessToken(token: string): User {
+		try {
+			return jwt.verify(token, process.env.JWT_ACCESS_SECRET) as User
+		} catch {
+			return null
+		}
+	}
+
+	validateRefreshToken(token: string): User {
+		try {
+			return jwt.verify(token, process.env.JWT_REFRESH_SECRET) as User
+		} catch {
+			return null
+		}
+	}
+
+	async saveToken(refreshToken: string): Promise<Token> {
+		return await this.TokenModel.create({ refreshToken })
+	}
+
+	async removeToken(refreshToken: string) {
+		return await this.TokenModel.deleteOne({ refreshToken })
+	}
+
+	async findToken(refreshToken: string) {
+		return await this.TokenModel.findOne({ refreshToken })
+	}
+}
+
+
+=====================================
+Файл: src/types/environment.d.ts
+=====================================
+
+export { }
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      PORT: string
+      HTTPS: string
+
+      MONGO_URL: string
+      CLIENT_URL: string
+
+      JWT_ACCESS_SECRET: string
+      JWT_REFRESH_SECRET: string
+
+      EMAIL: string
+      EMAIL_PASSWORD: string
+
+      YC_KEY_ID: string
+      YC_SECRET: string
+      YC_BUCKET_NAME: string
+
+      ADMIN_EMAILS: string
+
+      TG_API_KEY: string
+      TG_API_URL: string
+
+      API_URL: string
+      T_BANK_TERMINAL_ID: string
+      T_BANK_TERMINAL_PASSWORD: string
+      T_BANK_PAYMENT_INIT_URL: string
+    }
+  }
+}
+
+
+=====================================
+Файл: src/types/request-with-user-or-not.type.ts
+=====================================
+
+import { Request } from "express";
+import { UserFromClient } from "src/user/interfaces/user-from-client.interface";
+
+type RequestWithUserOrNot = Request & { user: UserFromClient | undefined }
+export default RequestWithUserOrNot
+
+
+=====================================
+Файл: src/types/request-with-user.type.ts
+=====================================
+
+import { Request } from "express";
+import { UserFromClient } from "src/user/interfaces/user-from-client.interface";
+
+type RequestWithUser = Request & { user: UserFromClient }
+export default RequestWithUser
+
+
+=====================================
+Файл: src/user/interfaces/company.interface.ts
+=====================================
+
+export interface CompanyFromDadata {
+  data: {
+    name: {
+      full_with_opf: string
+      short_with_opf: string
+      full: string
+    }
+    inn: string
+    ogrn: string
+    okved: string
+    kpp: string | null
+    address: {
+      value: string
+    }
+  }
+  value: string
+}
+
+
+=====================================
+Файл: src/user/interfaces/user-from-client.interface.ts
+=====================================
+
+import type { Role } from "../../roles/interfaces/role.interface";
+import type { CompanyFromDadata } from "./company.interface";
+export interface UserFromClient {
+  _id: string
+  name: string
+  surname: string
+  email: string
+  password: string
+  tgId: number | null
+  tgUsername: string | null
+  roles: Role[]
+  company: null | CompanyFromDadata
+}
+
+
+=====================================
+Файл: src/user/interfaces/user.interface.ts
+=====================================
+
+import mongoose from "mongoose"
+import type { Role } from "../../roles/interfaces/role.interface";
+import type { CompanyFromDadata } from "./company.interface"
+
+export interface User {
+  _id: mongoose.Types.ObjectId
+  name: string
+  surname: string
+  email: string
+  password: string
+  tgId: number | null
+  tgUsername: string | null
+  roles: Role[]
+  company: null | CompanyFromDadata
+  isModerated: boolean
+  inviteToken: string | null
+}
+
+
+=====================================
+Файл: src/user/models/user.model.ts
+=====================================
+
+import { MongooseModule } from "@nestjs/mongoose";
+import { UserSchema } from "../schemas/user.schema";
+
+let UserModel = MongooseModule.forFeature([{ name: 'User', schema: UserSchema, collection: 'users' }])
+export default UserModel
+
+
+=====================================
+Файл: src/user/schemas/company.schema.ts
+=====================================
+
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+@Schema({ _id: false })
+class CompanyName {
+  @Prop({ type: String, required: true })
+  full_with_opf: string;
+
+  @Prop({ type: String, required: true })
+  short_with_opf: string;
+
+  @Prop({ type: String, required: true })
+  full: string;
+}
+const CompanyNameSchema = SchemaFactory.createForClass(CompanyName);
+
+@Schema({ _id: false })
+class CompanyAddress {
+  @Prop({ type: String, required: true })
+  value: string;
+}
+const CompanyAddressSchema = SchemaFactory.createForClass(CompanyAddress);
+
+@Schema({ _id: false })
+class CompanyDataClass {
+  @Prop({ type: CompanyNameSchema, required: true })
+  name: CompanyName;
+
+  @Prop({
+    type: String,
+    required: true,
+    sparse: true
+  })
+  inn: string;
+
+  @Prop({ type: String, required: true })
+  ogrn: string;
+
+  @Prop({ type: String, required: true })
+  okved: string;
+
+  @Prop({ type: String, required: false, default: null })
+  kpp: string | null;
+
+  @Prop({ type: CompanyAddressSchema, required: true })
+  address: CompanyAddress;
+}
+
+const CompanyDataSchema = SchemaFactory.createForClass(CompanyDataClass);
+
+@Schema({ _id: false })
+export class CompanyFromDadataClass {
+  @Prop({ type: CompanyDataSchema, required: true })
+  data: CompanyDataClass;
+
+  @Prop({ type: String, required: true })
+  value: string;
+}
+
+export const CompanyFromDadataSchema = SchemaFactory.createForClass(CompanyFromDadataClass);
+
+
+=====================================
+Файл: src/user/schemas/user.schema.ts
+=====================================
+
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { CompanyFromDadataClass, CompanyFromDadataSchema } from './company.schema';
+
+export type UserDocument = HydratedDocument<UserClass>;
+
+@Schema()
+export class UserClass {
+  @Prop({
+    type: String,
+    required: true,
+    min: 2,
+  })
+  name: string;
+
+  @Prop({
+    type: String,
+    required: true,
+    unique: true
+  })
+  email: string;
+
+  @Prop({
+    type: String,
+    required: true,
+  })
+  password: string;
+
+  @Prop({
+    type: Number,
+    required: false,
+    default: null
+  })
+  tgId: number
+
+  @Prop({
+    type: String,
+    required: false,
+    default: null
+  })
+  tgUsername: string
+
+  @Prop({
+    type: Array,
+    default: [],
+    required: false,
+  })
+  roles: string[];
+
+  @Prop({
+    type: Array,
+    default: [],
+    required: false
+  })
+  avatars: string[];
+
+  @Prop({
+    type: CompanyFromDadataSchema,
+    required: false,
+    default: null,
+  })
+  company: CompanyFromDadataClass | null;
+
+  @Prop({
+    type: Boolean,
+    required: false,
+    default: false
+  })
+  isModerated: boolean
+}
+
+export const UserSchema = SchemaFactory.createForClass(UserClass);
+
+
+=====================================
+Файл: src/user/user.controller.ts
+=====================================
+
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+  Patch,
+} from '@nestjs/common';
+
+import { SomeAdminGuard } from 'src/admin/some_admin.guard';
+import { RolesService } from 'src/roles/roles.service';
+import { GlobalAdminGuard } from 'src/admin/global_admin.guard';
+
+import { UserService } from './user.service';
+import ApiError from 'src/exceptions/errors/api-error';
+
+
+// types
+import { Role } from '../roles/interfaces/role.interface';
+import { UserFromClient } from './interfaces/user-from-client.interface';
+import RequestWithUser from 'src/types/request-with-user.type';
+
+
+// all about MongoDB
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { UserClass } from './schemas/user.schema';
+
+
+@Controller('user')
+export class UserController {
+  constructor(
+    @InjectModel('User') private UserModel: Model<UserClass>,
+
+    private UserService: UserService,
+    private RolesService: RolesService,
+  ) { }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('get-by-id')
+  async get_by_id(@Query('_id') _id: string) {
+    let candidate = await this.UserModel.findById(_id, {
+      password: 0,
+    }).populate('orders').populate('managerIn');
+    if (!candidate)
+      throw ApiError.BadRequest('Пользователь с таким ID не найден');
+
+    return candidate;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(SomeAdminGuard)
+  @Post('change-user')
+  async changeUser(
+    @Req() req: RequestWithUser,
+    @Body('user') user: UserFromClient,
+  ) {
+    let subject_user = await this.UserModel.findById(user._id);
+
+    // ... Защиты, проверки
+
+    await subject_user.updateOne(user, { runValidators: true });
+  }
+
+  // async addRole(user_email: string, role_type: string) {
+  //   let role: Role = {
+  //     type: role_type,
+  //     rest_ids: [],
+  //   };
+  //   return await this.UserModel.updateOne(
+  //     { email: user_email, 'role.type': { $nin: [role_type] } },
+  //     { $addToSet: { roles: role } },
+  //     { runValidators: true },
+  //   );
+  // }
+
+  // async deleteRole(user_email: string, role_type: string) {
+  //   return await this.UserModel.updateOne(
+  //     { email: user_email },
+  //     { $unset: { 'roles.$[t]': '' } },
+  //     { arrayFilters: [{ 't.type': role_type }], runValidators: true },
+  //   );
+  // }
+}
+
+
+=====================================
+Файл: src/user/user.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { RolesService } from 'src/roles/roles.service';
+import UserModel from './models/user.model';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+
+@Module({
+  imports: [
+    UserModel,
+    JwtModule,
+  ],
+  controllers: [UserController],
+  providers: [RolesService, UserService]
+})
+export class UserModule {}
+
+
+=====================================
+Файл: src/user/user.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import { RolesService } from 'src/roles/roles.service';
+
+@Injectable()
+export class UserService {
+  constructor(
+    private RolesService: RolesService
+  ) {}
+
+
+}
+
+
+=====================================
+Файл: src/video/video.controller.ts
+=====================================
+
+import {
+  Controller,
+  Post,
+  Get,
+  UploadedFile,
+  UseInterceptors,
+  Body,
+  Query,
+  Res,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { VideoService } from './video.service';
+import { Throttle } from '@nestjs/throttler';
+
+import { Response } from 'express';
+
+import * as fs from 'node:fs';
+import { join } from 'path';
+
+import YaCloud from 'src/s3/bucket';
+
+// mongo
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
+@Throttle({ default: { limit: 100, ttl: 200000, blockDuration: 5 * 60000 } })
+@Controller('video')
+export class VideoController {
+  constructor(private readonly videoService: VideoService,
+  ) { }
+
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('lesson_id') lessonId: string,
+    @Body('filename') filename: string,
+    @Body('chunkIndex') chunkIndex: number,
+    @Body('totalChunks') totalChunks: number
+  ) {
+    return
+    const filePath = join(__dirname, '..', '..', 'public', 'lesson-videos', filename);
+    const uploadDir = join(__dirname, '..', '..', 'public', 'lesson-videos');
+
+    // Ensure the upload directory exists
+    // Note: You can check if the directory exists and create it if it doesn't
+    fs.mkdirSync(uploadDir, { recursive: true })
+
+    // Write the chunk to the file
+    const writeStream = fs.createWriteStream(filePath, { flags: 'a' });
+    writeStream.write(file.buffer);
+    writeStream.end();
+
+    // console.log(chunkIndex, totalChunks);
+    // Check if it's the last chunk, and if so, perform final steps
+    if (Number(chunkIndex) + 1 == Number(totalChunks)) {
+      // Handle merging or finalize the upload, send a response, etc.
+      // console.log(fileBuffer);
+      // setTimeout(() => {
+
+      //   return fs.readFile(filePath, async (err, data) => {
+      //     console.log(err, data);
+
+      //     let presignedUrl = await YaCloud.generatePresignedUrl('lesson-videos/' + filename)
+      //     // console.log(presignedUrl);
+
+      //     let result = await YaCloud.uploadVideo(data, presignedUrl);
+      //     // console.log(result);
+
+      //     return await this.LessonModel.findByIdAndUpdate(lessonId, { $push: { videos: process.env.API_URL + '/static/lesson-videos/' + String(filename) } })
+      //   })
+      // }, 1000);
+
+      let hlsResult = await this.videoService.createHLS(filePath, lessonId)
+      if (hlsResult.status == 'error') {
+        return hlsResult
+      }
+
+      // return await this.LessonModel.findByIdAndUpdate(lessonId, { $push: { videos: process.env.API_URL + '/static/lesson-videos/' + String(filename) } })
+    }
+
+    return { message: 'Chunk uploaded successfully', chunkIndex };
+  }
+
+  // @Get('stream/lesson-video')
+  // async streamVideo(@Query('filename') filename: string, @Res() res: Response) {
+  //   const filePath = join(__dirname, '..', '..', 'public', filename); // Path to your video files
+
+  //   try {
+  //     const stats = statSync(filePath);
+  //     const fileSize = stats.size;
+  //     const range = res.headers['range'];
+
+  //     if (!range) {
+  //       res.writeHead(200, {
+  //         'Content-Length': fileSize,
+  //         'Content-Type': 'video/mp4',
+  //       });
+  //       createReadStream(filePath).pipe(res);
+  //     } else {
+  //       const parts = range.replace(/bytes=/, '').split('-');
+  //       const start = parseInt(parts[0], 10);
+  //       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+  //       if (start >= fileSize || end >= fileSize || start > end) {
+  //         res.status(416).send('Requested Range Not Satisfiable');
+  //         return;
+  //       }
+
+  //       const chunksize = end - start + 1;
+  //       const file = createReadStream(filePath, { start, end });
+
+  //       res.writeHead(206, {
+  //         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+  //         'Accept-Ranges': 'bytes',
+  //         'Content-Length': chunksize,
+  //         'Content-Type': 'video/mp4',
+  //       });
+
+  //       file.pipe(res);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(404).send('File not found');
+  //   }
+  // }
+}
+
+
+=====================================
+Файл: src/video/video.module.ts
+=====================================
+
+import { Module } from '@nestjs/common';
+import { VideoService } from './video.service';
+import { VideoController } from './video.controller';
+
+@Module({
+  imports: [],
+  controllers: [VideoController],
+  providers: [VideoService],
+})
+export class VideoModule { }
+
+
+=====================================
+Файл: src/video/video.service.ts
+=====================================
+
+import { Injectable } from '@nestjs/common';
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
+import * as ffmpeg from "fluent-ffmpeg"
+import * as path from "path";
+import * as fs from "node:fs";
+
+
+@Injectable()
+export class VideoService {
+  // Your business logic around video processing can go here
+  async handleFileUpload(file: Express.Multer.File) {
+    return
+    let customFilename = Date.now() + '_' + file.originalname;
+    const filePath = join(__dirname, '..', '..', 'public', 'lesson-videos', customFilename);
+    await writeFile(filePath, file.buffer);
+    return {
+      message: 'Folder uploaded successfully!',
+      filename: customFilename
+    };
+  }
+  async createHLS(videoFilePath: string, lessonId: string) {
+    return
+    const outputDir = `public/lesson-videos/playlists/lesson-${lessonId}`; // Directory to output HLS files
+    const segmentLength = '30'; // Length of each HLS segment in seconds
+
+    fs.mkdirSync(outputDir, { recursive: true })
+
+    return ffmpeg(videoFilePath)
+      .outputOptions([
+        '-hls_time', segmentLength, // Segment length
+        '-hls_list_size', '0', // Include all segments in the playlist
+        '-f', 'hls', // HLS format  
+        '-hls_flags', 'delete_segments' // Optional: delete segments(video from lesson-videos) after they are not needed
+      ])
+      .output(path.join(outputDir, 'playlist.m3u8')) // Master playlist output file
+      .on('end', () => {
+        fs.unlinkSync(videoFilePath);
+        return { status: 'success', message: 'Успешно' }
+      })
+      .on('error', (err) => {
+        return { status: 'error', message: 'Ошибка: ' + err }
+      })
+      .run();
+  }
+
+}
+
+
+=====================================
+Файл: tsconfig.build.json
+=====================================
+
+{
+  "extends": "./tsconfig.json",
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "public/**"]
+}
+
+
+=====================================
+Файл: tsconfig.json
+=====================================
+
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2021",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    "noFallthroughCasesInSwitch": false,
+  },
+}
