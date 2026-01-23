@@ -55,7 +55,7 @@ export class TPaymentsController {
         return orderFinal
       }
     } catch (error) {
-      console.log("create-employer-order error: ", error);
+      console.log("create-employer-order error: ", error.response);
       throw ApiError.BadRequest("Ошибка при создании платежа")
     }
 
