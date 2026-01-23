@@ -18,6 +18,11 @@ export class TPaymentsService {
   ): Promise<TBankPaymentResponse | null> {
     const notificationURL = process.env.API_URL + "/t-payments/employer-callback"
 
+    console.log('env vars: ', process.env.T_BANK_TERMINAL_ID,
+      process.env.T_BANK_TERMINAL_PASSWORD,
+      process.env.T_BANK_PAYMENT_INIT_URL);
+
+
     let tokenPayloadObject = {
       Amount: price * quantity,
       // NotificationURL: notificationURL,
