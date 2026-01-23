@@ -28,31 +28,38 @@ export class TPaymentsController {
       throw ApiError.BadRequest("Ошибка при создании платежа")
     }
 
-    let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount, email)
-    console.log(result);
+    try {
+      let result = await this.tPaymentsService.createPaymentLink(order._id.toString(), amount, email)
+      console.log(result);
 
-    if (result.Success) {
-      let orderFinal = await this.EmployerPaymentOrderModel.findByIdAndUpdate(
-        result.OrderId,
-        {
-          $set: {
-            status: result.Status,
-            payment: {
-              TerminalKey: result.TerminalKey,
-              Amount: result.Amount,
-              Success: result.Success,
-              Status: result.Status,
-              PaymentId: result.PaymentId,
-              PaymentURL: result?.PaymentURL || ""
+
+      if (result.Success) {
+        let orderFinal = await this.EmployerPaymentOrderModel.findByIdAndUpdate(
+          result.OrderId,
+          {
+            $set: {
+              status: result.Status,
+              payment: {
+                TerminalKey: result.TerminalKey,
+                Amount: result.Amount,
+                Success: result.Success,
+                Status: result.Status,
+                PaymentId: result.PaymentId,
+                PaymentURL: result?.PaymentURL || ""
+              }
             }
-          }
-        },
-        { new: true }
-      )
+          },
+          { new: true }
+        )
 
-      return orderFinal
+        return orderFinal
+      }
+    } catch (error) {
+      console.log("create-employer-order error: ", error);
+      throw ApiError.BadRequest("Ошибка при создании платежа")
     }
-    return null;
+
+    throw ApiError.BadRequest("Ошибка при создании платежа")
   }
 
   @Post("get-last-user-payment")

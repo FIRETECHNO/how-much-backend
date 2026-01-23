@@ -18,11 +18,6 @@ export class TPaymentsService {
   ): Promise<TBankPaymentResponse | null> {
     const notificationURL = process.env.API_URL + "/t-payments/employer-callback"
 
-    console.log('env vars: ', process.env.T_BANK_TERMINAL_ID,
-      process.env.T_BANK_TERMINAL_PASSWORD,
-      process.env.T_BANK_PAYMENT_INIT_URL);
-
-
     let tokenPayloadObject = {
       Amount: price * quantity,
       // NotificationURL: notificationURL,
@@ -30,10 +25,10 @@ export class TPaymentsService {
       Password: process.env.T_BANK_TERMINAL_PASSWORD,
       TerminalKey: process.env.T_BANK_TERMINAL_ID,
     }
-    console.log(tokenPayloadObject);
+    // console.log(tokenPayloadObject);
 
     let tokenPayloadStr = Object.values(tokenPayloadObject).join('');
-    console.log(tokenPayloadStr);
+    // console.log(tokenPayloadStr);
 
     const Token = crypto.createHash('sha256')
       .update(tokenPayloadStr, 'utf8')
@@ -57,8 +52,8 @@ export class TPaymentsService {
         Email: email
       }
     }
-    console.log(process.env.T_BANK_PAYMENT_INIT_URL);
-    console.log(reqBody);
+
+    console.log(JSON.stringify(reqBody));
 
     let res = await firstValueFrom(
       this.httpService.post(process.env.T_BANK_PAYMENT_INIT_URL, reqBody)
