@@ -59,9 +59,11 @@ import { APP_GUARD } from '@nestjs/core';
     InvitesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }],
+  providers: [AppService,
+    // {
+    // provide: APP_GUARD,
+    // useClass: ThrottlerGuard,
+    // }
+  ],
 })
 export class AppModule { }
