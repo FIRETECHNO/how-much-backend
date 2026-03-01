@@ -28,6 +28,7 @@ declare global {
       T_BANK_TERMINAL_ID: string
       T_BANK_TERMINAL_PASSWORD: string
       T_BANK_PAYMENT_INIT_URL: string
+      T_BANK_API_URL: string
     }
   }
 }

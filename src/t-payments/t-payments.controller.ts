@@ -55,7 +55,7 @@ export class TPaymentsController {
         return orderFinal
       }
     } catch (error) {
-      console.log("create-employer-order error: ", error.response);
+      // console.log("create-employer-order error: ", error.response);
       throw ApiError.BadRequest("Ошибка при создании платежа")
     }
 
@@ -100,5 +100,18 @@ export class TPaymentsController {
     }
     // error status
     return res.status(HttpStatus.UNPROCESSABLE_ENTITY).send()
+  }
+
+  @Post('cancel-payment')
+  async cancel(
+    @Body("paymentId") paymentId: string
+  ) {
+    try {
+      return await this.tPaymentsService.cancelPayment(paymentId)
+    } catch (error) {
+      console.log(error);
+
+      throw ApiError.BadRequest("Ошибка при отмене платежа")
+    }
   }
 }
