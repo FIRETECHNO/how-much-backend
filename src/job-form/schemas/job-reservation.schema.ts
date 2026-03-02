@@ -55,6 +55,13 @@ export class JobReservationClass {
     default: () => ({ textContent: null, sentDate: null })
   })
   employeeFeedback: Feedback;
+
+  @Prop({
+    type: Boolean,
+    required: false,
+    default: false
+  })
+  isPreFinished: boolean
 }
 
 export const JobReservationSchema = SchemaFactory.createForClass(JobReservationClass);

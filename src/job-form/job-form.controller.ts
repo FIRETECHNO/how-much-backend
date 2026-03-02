@@ -241,6 +241,8 @@ export class JobFormController {
     let userReservations = await this.JobReservationModel.find({ employerId }).populate("jobFormId")
     for (let r of userReservations) {
       const currentTime = new Date().getTime()
+      if (r.isPreFinished) continue;
+
       if (currentTime - r.startDate.getTime() <= RESERVATION_DURATION) {
         return r
       }
@@ -382,5 +384,21 @@ export class JobFormController {
         email: 1,
       }
     })
+  }
+  @Post("finish-reservation")
+  async finishReservation(
+    @Body("jobFormId") jobFormId: string,
+    @Body("jobReservationId") jobReservationId: string
+  ) {
+    await this.JobFormModel.findByIdAndUpdate(jobFormId, {
+      $set: {
+        lastReservationDate: null
+      }
+    })
+
+    return await this.JobReservationModel.findByIdAndUpdate(
+      jobReservationId,
+      { $set: { isPreFinished: true } }
+    )
   }
 }
