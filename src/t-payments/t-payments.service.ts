@@ -66,6 +66,7 @@ export class TPaymentsService {
         }],
       }
     }
+    console.log(JSON.stringify(reqBody));
 
     let res = await firstValueFrom(
       this.httpService.post(process.env.T_BANK_PAYMENT_INIT_URL, reqBody)
