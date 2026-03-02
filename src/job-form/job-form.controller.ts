@@ -125,6 +125,7 @@ export class JobFormController {
               lastReservationDate: { $lt: reservationDeadline }
             },
             { lastReservationDate: { $exists: false } },
+            { lastReservationDate: null },
           ],
         },
         {
