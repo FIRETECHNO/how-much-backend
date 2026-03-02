@@ -41,6 +41,8 @@ export class TPaymentsService {
       OrderId: orderId,
       TerminalKey: process.env.T_BANK_TERMINAL_ID,
     }
+    console.log(tokenPayloadObject);
+
     const Token = this.generateRequestToken(tokenPayloadObject)
 
     const reqBody = {
@@ -98,13 +100,3 @@ export class TPaymentsService {
     return res.data;
   }
 }
-/*{
-  Success: true,
-  ErrorCode: '0',
-  TerminalKey: '1769605513305DEMO',
-  Status: 'NEW',
-  PaymentId: '8064497361',
-  OrderId: '69a3e15d08adb3bf7e982c15',
-  Amount: 10000,
-  PaymentURL: 'https://pay.tbank.ru/nW04lLo8'
-}*/
