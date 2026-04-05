@@ -97,41 +97,48 @@ bot.on('bot_started', async (ctx) => {
 });
 
 bot.on('message_callback', async (ctx) => {
-  const payload = ctx.callback.body.payload;
-  const userId = ctx.user.user_id;
+  try {
+    const payload = ctx.callback?.payload ?? ctx.callback?.body?.payload;
+    if (!payload) return;
 
-  if (payload.startsWith('type:')) {
-    const type = payload.replace('type:', '');
-    const session = getSession(userId);
-    session.tgUsername = ctx.user.nickname || null;
+    const userId = ctx.user?.user_id;
+    if (!userId) return;
 
-    if (type === 'employer') {
-      session.step = 'inn';
-      await ctx.reply('👔 Регистрация работодателя\n\nКак вас зовут?');
-    } else if (type === 'employee') {
-      session.step = 'name';
-      await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
-    } else if (type === 'help') {
-      session.step = 'help_ask';
-      await ctx.reply(
-        '🆘 Техническая поддержка\n\n' +
-          'Напишите ваш вопрос или проблему — мы передадим в поддержку.\n' +
-          'Обычно отвечают в течение 5–30 минут в рабочее время.',
-      );
+    if (payload.startsWith('type:')) {
+      const type = payload.replace('type:', '');
+      const session = getSession(userId);
+      session.tgUsername = ctx.user.nickname || null;
+
+      if (type === 'employer') {
+        session.step = 'inn';
+        await ctx.reply('👔 Регистрация работодателя\n\nКак вас зовут?');
+      } else if (type === 'employee') {
+        session.step = 'name';
+        await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
+      } else if (type === 'help') {
+        session.step = 'help_ask';
+        await ctx.reply(
+          '🆘 Техническая поддержка\n\n' +
+            'Напишите ваш вопрос или проблему — мы передадим в поддержку.\n' +
+            'Обычно отвечают в течение 5–30 минут в рабочее время.',
+        );
+      }
+      return;
     }
-    return;
-  }
 
-  if (payload.startsWith('vacancy:')) {
-    const vacancy = payload.replace('vacancy:', '');
-    const session = getSession(userId);
+    if (payload.startsWith('vacancy:')) {
+      const vacancy = payload.replace('vacancy:', '');
+      const session = getSession(userId);
 
-    if (session.step === 'vacancy') {
-      session.vacancy = vacancy;
-      session.step = 'email';
-      await ctx.reply('Теперь введите ваш email:');
+      if (session.step === 'vacancy') {
+        session.vacancy = vacancy;
+        session.step = 'email';
+        await ctx.reply('Теперь введите ваш email:');
+      }
+      return;
     }
-    return;
+  } catch (err) {
+    console.error('Ошибка в message_callback:', err);
   }
 });
 
