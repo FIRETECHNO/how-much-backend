@@ -1,6 +1,10 @@
 import 'dotenv/config';
 
-import { employeeBot as employee, employerBot as employer, employeeHelpBot as employeeHelp } from './bots/index.js';
+import {
+  employeeBot as employee,
+  employerBot as employer,
+  employeeHelpBot as employeeHelp,
+} from './bots/index.js';
 import { createSession } from './session.js';
 import { startMessageWorker, closeQueue } from './queue.js';
 import employeeBotLogic from './bots/employee-bot.js';
@@ -8,6 +12,7 @@ import employeeHelpBotLogic from './bots/employee-help-bot.js';
 import employerBotLogic from './bots/employer-bot.js';
 import express from 'express';
 import apiRouter from './api/router.js';
+import './max-bot/index.js';
 
 async function startBots() {
   console.log('🚀 Запуск Telegram-ботов + очередей...');
