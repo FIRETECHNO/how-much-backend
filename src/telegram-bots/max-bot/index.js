@@ -57,104 +57,54 @@ async function sendWelcome(ctx) {
 }
 
 bot.command('start', async (ctx) => {
-  // Не отвечаем, если это reply на сообщение бота (чтобы не дублировать)
-  if (ctx.message.body.reply_to_mid) return;
-
-  const args = ctx.message.body.text.split(' ');
-  const payload = args[1];
-
-  if (payload) {
-    if (payload.startsWith('employer')) {
-      const session = getSession(ctx.user.user_id);
-      session.step = 'inn';
-      await ctx.reply(
-        '👔 Регистрация работодателя\n\nУкажите ИНН вашей компании (10 или 12 цифр):',
-      );
-      return;
-    }
-    if (payload.startsWith('employee')) {
-      const session = getSession(ctx.user.user_id);
-      session.step = 'name';
-      await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
-      return;
-    }
-    if (payload.startsWith('help')) {
-      const session = getSession(ctx.user.user_id);
-      session.step = 'help_ask';
-      await ctx.reply(
-        '🆘 Техническая поддержка\n\n' +
-          'Напишите ваш вопрос или проблему — мы передадим в поддержку.\n' +
-          'Обычно отвечают в течение 5–30 минут в рабочее время.',
-      );
-      return;
-    }
-  }
-
   clearSession(ctx.user.user_id);
   await sendWelcome(ctx);
 });
 
-// Убираем bot_started - он дублирует command('start')
-// command('start') срабатывает и при нажатии кнопки старт
+bot.action('type:employer', async (ctx) => {
+  const session = getSession(ctx.user.user_id);
+  session.tgUsername = ctx.user.nickname || null;
+  session.step = 'inn';
+  await ctx.reply('👔 Регистрация работодателя\n\nКак вас зовут?');
+});
 
-bot.on('message_callback', async (ctx) => {
-  try {
-    await ctx.callback.answer(); // Подтверждаем нажатие кнопки
+bot.action('type:employee', async (ctx) => {
+  const session = getSession(ctx.user.user_id);
+  session.tgUsername = ctx.user.nickname || null;
+  session.step = 'name';
+  await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
+});
 
-    const payload = ctx.callback?.payload ?? ctx.callback?.body?.payload;
-    if (!payload) return;
+bot.action('type:help', async (ctx) => {
+  const session = getSession(ctx.user.user_id);
+  session.tgUsername = ctx.user.nickname || null;
+  session.step = 'help_ask';
+  await ctx.reply(
+    '🆘 Техническая поддержка\n\n' +
+      'Напишите ваш вопрос или проблему — мы передадим в поддержку.\n' +
+      'Обычно отвечают в течение 5–30 минут в рабочее время.',
+  );
+});
 
-    const userId = ctx.user?.user_id;
-    if (!userId) return;
+bot.action(/^vacancy:/, async (ctx) => {
+  const vacancy = ctx.actionPayload.replace('vacancy:', '');
+  const session = getSession(ctx.user.user_id);
 
-    if (payload.startsWith('type:')) {
-      const type = payload.replace('type:', '');
-      const session = getSession(userId);
-      session.tgUsername = ctx.user.nickname || null;
-
-      if (type === 'employer') {
-        session.step = 'inn';
-        await ctx.reply('👔 Регистрация работодателя\n\nКак вас зовут?');
-      } else if (type === 'employee') {
-        session.step = 'name';
-        await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
-      } else if (type === 'help') {
-        session.step = 'help_ask';
-        await ctx.reply(
-          '🆘 Техническая поддержка\n\n' +
-            'Напишите ваш вопрос или проблему — мы передадим в поддержку.\n' +
-            'Обычно отвечают в течение 5–30 минут в рабочее время.',
-        );
-      }
-      return;
-    }
-
-    if (payload.startsWith('vacancy:')) {
-      const vacancy = payload.replace('vacancy:', '');
-      const session = getSession(userId);
-
-      if (session.step === 'vacancy') {
-        session.vacancy = vacancy;
-        session.step = 'email';
-        await ctx.reply('Теперь введите ваш email:');
-      }
-      return;
-    }
-  } catch (err) {
-    console.error('Ошибка в message_callback:', err);
+  if (session.step === 'vacancy') {
+    session.vacancy = vacancy;
+    session.step = 'email';
+    await ctx.reply('Теперь введите ваш email:');
   }
 });
 
 bot.on('message_created', async (ctx) => {
-  // Не отвечаем на свои сообщения
+  const text = ctx.message.body.text?.trim();
+  if (!text) return;
   if (ctx.message.sender.is_bot) return;
-  if (!ctx.message.body.text) return;
 
-  const text = ctx.message.body.text.trim();
   const userId = ctx.user.user_id;
   const session = getSession(userId);
 
-  if (text.startsWith('/start')) return;
   if (text.startsWith('/')) return;
 
   if (session.step === 'name') {
@@ -305,8 +255,3 @@ bot.on('message_created', async (ctx) => {
 
 bot.start();
 console.log('MAX Bot запущен');
-
-// Узнать chat_id — добавь бота в групповой чат, он выведет id в консоль
-bot.on('bot_added', async (ctx) => {
-  console.log('Бот добавлен в чат:', ctx.chat.chat_id);
-});
