@@ -57,6 +57,9 @@ async function sendWelcome(ctx) {
 }
 
 bot.command('start', async (ctx) => {
+  // Не отвечаем, если это reply на сообщение бота (чтобы не дублировать)
+  if (ctx.message.body.reply_to_mid) return;
+
   const args = ctx.message.body.text.split(' ');
   const payload = args[1];
 
@@ -91,13 +94,13 @@ bot.command('start', async (ctx) => {
   await sendWelcome(ctx);
 });
 
-bot.on('bot_started', async (ctx) => {
-  clearSession(ctx.user.user_id);
-  await sendWelcome(ctx);
-});
+// Убираем bot_started - он дублирует command('start')
+// command('start') срабатывает и при нажатии кнопки старт
 
 bot.on('message_callback', async (ctx) => {
   try {
+    await ctx.callback.answer(); // Подтверждаем нажатие кнопки
+
     const payload = ctx.callback?.payload ?? ctx.callback?.body?.payload;
     if (!payload) return;
 
@@ -143,6 +146,8 @@ bot.on('message_callback', async (ctx) => {
 });
 
 bot.on('message_created', async (ctx) => {
+  // Не отвечаем на свои сообщения
+  if (ctx.message.sender.is_bot) return;
   if (!ctx.message.body.text) return;
 
   const text = ctx.message.body.text.trim();
