@@ -91,7 +91,8 @@ bot.action('type:help', async (ctx) => {
 
 bot.action(/^vacancy:/, async (ctx) => {
   await ctx.answerOnCallback();
-  const payload = ctx.callback?.payload;
+  const payload = ctx.update?.callback?.payload;
+  console.log('Vacancy action triggered, payload:', payload);
   const vacancy = payload?.replace('vacancy:', '') || '';
   const session = getSession(ctx.user.user_id);
 
@@ -99,6 +100,8 @@ bot.action(/^vacancy:/, async (ctx) => {
     session.vacancy = vacancy;
     session.step = 'email';
     await ctx.reply('Теперь введите ваш email:');
+  } else {
+    console.log('Wrong step, current step:', session.step);
   }
 });
 
