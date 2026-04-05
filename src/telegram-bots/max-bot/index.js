@@ -61,21 +61,24 @@ bot.command('start', async (ctx) => {
   await sendWelcome(ctx);
 });
 
-bot.action('type:employer', async (ctx) => {
+bot.callbackQuery('type:employer', async (ctx) => {
+  await ctx.answerCallbackQuery();
   const session = getSession(ctx.user.user_id);
   session.tgUsername = ctx.user.nickname || null;
   session.step = 'inn';
   await ctx.reply('👔 Регистрация работодателя\n\nКак вас зовут?');
 });
 
-bot.action('type:employee', async (ctx) => {
+bot.callbackQuery('type:employee', async (ctx) => {
+  await ctx.answerCallbackQuery();
   const session = getSession(ctx.user.user_id);
   session.tgUsername = ctx.user.nickname || null;
   session.step = 'name';
   await ctx.reply('👷 Регистрация соискателя\n\nКак вас зовут?');
 });
 
-bot.action('type:help', async (ctx) => {
+bot.callbackQuery('type:help', async (ctx) => {
+  await ctx.answerCallbackQuery();
   const session = getSession(ctx.user.user_id);
   session.tgUsername = ctx.user.nickname || null;
   session.step = 'help_ask';
@@ -86,8 +89,9 @@ bot.action('type:help', async (ctx) => {
   );
 });
 
-bot.action(/^vacancy:/, async (ctx) => {
-  const vacancy = ctx.actionPayload.replace('vacancy:', '');
+bot.callbackQuery(/^vacancy:/, async (ctx) => {
+  await ctx.answerCallbackQuery();
+  const vacancy = ctx.callbackData.replace('vacancy:', '');
   const session = getSession(ctx.user.user_id);
 
   if (session.step === 'vacancy') {
