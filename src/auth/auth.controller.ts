@@ -18,6 +18,7 @@ import mongoose, { Model, Types } from 'mongoose';
 import { UserClass } from 'src/user/schemas/user.schema';
 import { JobFormClass } from 'src/job-form/schemas/job-form.schema';
 import { InvitesService } from 'src/invites/invites.service';
+import ApiError from 'src/exceptions/errors/api-error';
 @Controller('auth')
 export class AuthController {
 	constructor(
@@ -52,6 +53,8 @@ export class AuthController {
 		@Res({ passthrough: true }) res: Response,
 		@Body() user: User
 	) {
+		throw ApiError.AccessDenied()
+
 		const userData = await this.AuthService.registration(user)
 
 		await this.JobFormModel.updateMany(
